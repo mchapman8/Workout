@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Workout">
+<title>Week 1 Workout</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0e0f;--surf:#17171a;--surf2:#202024;--border:#2a2a2f;
+  --text:#f0efe8;--muted:#65656f;
+  --str:#c8f060;--run:#60c8f0;--af:#f060a8;--rest:#55555f;
+  --vo2:#60c8f0;--hr:#f060a8;--hrv:#c8f060;--bf:#f0a860;--wt:#a860f0;
+  --fh:'Syne',sans-serif;--fm:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:var(--fm);min-height:100vh;overscroll-behavior:none}
+body{padding-bottom:80px}
+
+.topbar{position:sticky;top:0;z-index:100;background:rgba(14,14,15,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 20px 12px}
+.safe-top{height:env(safe-area-inset-top,0px)}
+.top-eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.top-title{font-family:var(--fh);font-size:22px;font-weight:800;line-height:1}
+.top-sub{font-size:11px;color:var(--muted);margin-top:3px}
+
+.nav-strip{display:flex;gap:6px;padding:12px 20px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
+.nav-strip::-webkit-scrollbar{display:none}
+.nav-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surf);cursor:pointer;transition:all .15s}
+.nav-btn .n-label{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);transition:color .15s}
+.n-dot{width:5px;height:5px;border-radius:50%}
+.nav-btn[data-type="str"].sel{border-color:var(--str);background:#141c08}
+.nav-btn[data-type="run"].sel{border-color:var(--run);background:#081620}
+.nav-btn[data-type="af"].sel{border-color:var(--af);background:#200a14}
+.nav-btn[data-type="rest"].sel{border-color:var(--muted);background:#141416}
+.nav-btn[data-type="dash"].sel{border-color:#a860f0;background:#160a20}
+.nav-btn[data-type="str"].sel .n-label{color:var(--str)}
+.nav-btn[data-type="run"].sel .n-label{color:var(--run)}
+.nav-btn[data-type="af"].sel .n-label{color:var(--af)}
+.nav-btn[data-type="rest"].sel .n-label{color:var(--muted)}
+.nav-btn[data-type="dash"].sel .n-label{color:#a860f0}
+
+.content{padding:20px}
+
+/* Dashboard styles */
+.dash-section{margin-bottom:28px}
+.dash-title{font-family:var(--fh);font-size:18px;font-weight:800;margin-bottom:4px}
+.dash-sub{font-size:11px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.metric-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px 16px;position:relative;overflow:hidden}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.mc-vo2::before{background:var(--vo2)}
+.mc-hr::before{background:var(--hr)}
+.mc-hrv::before{background:var(--hrv)}
+.mc-bf::before{background:var(--bf)}
+.mc-wt::before{background:var(--wt)}
+.metric-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.metric-value{font-family:var(--fh);font-size:26px;font-weight:800;line-height:1}
+.metric-unit{font-size:12px;color:var(--muted);margin-left:3px}
+.metric-target{font-size:11px;color:var(--muted);margin-top:6px}
+.metric-status{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;margin-top:6px;font-weight:500}
+.status-good{background:#141c08;color:var(--str)}
+.status-warn{background:#1e1308;color:var(--bf)}
+.status-great{background:#081620;color:var(--run)}
+.metric-card-full{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px 16px;position:relative;overflow:hidden;margin-bottom:10px}
+.metric-card-full::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+
+.progress-bar-wrap{height:5px;background:var(--surf2);border-radius:3px;margin-top:10px;overflow:hidden}
+.progress-bar{height:100%;border-radius:3px;transition:width .3s}
+
+.burnout-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.burnout-title{font-family:var(--fh);font-size:13px;font-weight:700;margin-bottom:10px;color:var(--text)}
+.burnout-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.burnout-row:last-child{border-bottom:none}
+.burnout-label{color:var(--muted)}
+.burnout-val{font-weight:500}
+.burnout-ok{color:var(--str)}
+.burnout-warn{color:var(--bf)}
+.burnout-bad{color:var(--hr)}
+
+/* Day session styles */
+.day-summary{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:20px}
+.day-summary-title{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.focus-tags{display:flex;gap:6px;flex-wrap:wrap}
+.focus-tag{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500}
+.ft-vo2{background:#081620;color:var(--vo2);border:1px solid #103050}
+.ft-hr{background:#200a14;color:var(--hr);border:1px solid #401828}
+.ft-hrv{background:#141c08;color:var(--hrv);border:1px solid #263610}
+.ft-bf{background:#1e1308;color:var(--bf);border:1px solid #362008}
+.ft-str{background:#1a1020;color:var(--wt);border:1px solid #301840}
+
+.s-tag{display:inline-block;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:6px;margin-bottom:12px}
+.s-tag-str{background:#141c08;color:var(--str);border:1px solid #263610}
+.s-tag-run{background:#081620;color:var(--run);border:1px solid #103050}
+.s-tag-af{background:#200a14;color:var(--af);border:1px solid #401828}
+.s-tag-rest{background:#141416;color:var(--muted);border:1px solid var(--border)}
+.s-title{font-family:var(--fh);font-size:24px;font-weight:800;line-height:1.1;margin-bottom:4px}
+.s-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:8px}
+.s-timing{font-size:11px;font-weight:500;padding:6px 10px;border-radius:6px;display:inline-block;margin-bottom:22px}
+.t-str{background:#141c08;color:var(--str)}
+.t-run{background:#081620;color:var(--run)}
+.t-af{background:#200a14;color:var(--af)}
+.t-rest{background:#141416;color:var(--muted)}
+
+.sec-lbl{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px;display:flex;align-items:center;gap:10px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.af-block{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--af);border-radius:12px;padding:14px 16px;margin-bottom:8px}
+.af-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:5px}
+.af-sub{font-size:12px;color:var(--muted);line-height:1.6}
+
+.ex{background:var(--surf);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;transition:border-color .15s}
+.ex.open{border-color:#383840}
+.ex-hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;gap:12px;user-select:none}
+.ex-hdr:active{background:var(--surf2)}
+.ex-left{flex:1;min-width:0}
+.ex-name{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
+.ex-sets{font-size:11px;color:var(--str);font-weight:500;margin-bottom:5px}
+.ex-badges{display:flex;gap:5px;flex-wrap:wrap}
+.ex-badge{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500}
+.eb-vo2{background:#081620;color:var(--vo2);border:1px solid #103050}
+.eb-hr{background:#200a14;color:var(--hr);border:1px solid #401828}
+.eb-hrv{background:#141c08;color:var(--hrv);border:1px solid #263610}
+.eb-bf{background:#1e1308;color:var(--bf);border:1px solid #362008}
+.eb-str{background:#1a1020;color:var(--wt);border:1px solid #301840}
+.ex-arr{font-size:13px;color:var(--muted);transition:transform .2s;flex-shrink:0}
+.ex.open .ex-arr{transform:rotate(180deg)}
+.ex-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}
+.ex.open .ex-body{display:block}
+
+.how-lbl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
+.how-step{display:flex;gap:10px;margin-bottom:9px;font-size:12px;color:var(--text);line-height:1.65}
+.how-n{min-width:20px;height:20px;border-radius:50%;background:var(--surf2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);flex-shrink:0;margin-top:1px}
+.callout{border-radius:8px;padding:9px 12px;margin-top:8px;font-size:12px;line-height:1.55}
+.c-tip{background:#121a07;color:#9acc38;border:1px solid #203608}
+.c-warn{background:#1e1308;color:#d09040;border:1px solid #362008}
+.c-prog{background:#071420;color:#40aad0;border:1px solid #0c2840}
+.c-metric{background:#160a20;color:#b880f0;border:1px solid #2a1440}
+.c-lbl{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;opacity:.65}
+
+.run-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.run-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px}
+.run-card-full{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px}
+.run-lbl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.run-val{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--run);line-height:1}
+.run-note{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
+.rest-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px}
+.rest-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:4px}
+.rest-sub{font-size:12px;color:var(--muted);line-height:1.55}
+.pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.pill{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);color:var(--muted)}
+
+.updated-note{font-size:10px;color:var(--muted);text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="safe-top"></div>
+  <div class="top-eyebrow">Week 1 · Fitness Plan</div>
+  <div class="top-title" id="top-title">Dashboard</div>
+  <div class="top-sub" id="top-sub">Health metrics + weekly overview</div>
+</div>
+<div class="nav-strip" id="nav-strip"></div>
+<div class="content" id="content"></div>
+
+<script>
+const METRICS={
+  vo2:{label:'VO2 Max',value:'43.7',unit:'',color:'var(--vo2)',cls:'mc-vo2',bcls:'eb-vo2',
+    target:'Target: 45+ by week 12',status:'Good',scls:'status-good',
+    desc:'Measures cardiovascular fitness — how efficiently your body uses oxygen during exercise.',
+    pct:73,
+    burnout:{label:'VO2 Max declining 3+ weeks',threshold:'Below 42.0',status:'ok'}},
+  hr:{label:'Resting HR',value:'57',unit:'bpm',color:'var(--hr)',cls:'mc-hr',bcls:'eb-hr',
+    target:'Target: stay below 60 bpm',status:'Great',scls:'status-great',
+    desc:'Lower resting HR means your heart is efficient and recovery is strong.',
+    pct:80,
+    burnout:{label:'Resting HR elevated',threshold:'Above 65 bpm',status:'ok'}},
+  hrv:{label:'HRV',value:'68',unit:'ms',color:'var(--hrv)',cls:'mc-hrv',bcls:'eb-hrv',
+    target:'Target: stay above 60ms',status:'Great',scls:'status-great',
+    desc:'Heart rate variability — a key recovery indicator. Higher is better.',
+    pct:85,
+    burnout:{label:'HRV dropping',threshold:'Below 50ms',status:'ok'}},
+  bf:{label:'Body fat',value:'14.8',unit:'%',color:'var(--bf)',cls:'mc-bf',bcls:'eb-bf',
+    target:'Target: 12–13% by week 12',status:'Good',scls:'status-good',
+    desc:'At 14.8% you have a solid base. Nutrition deficit + training will reveal definition.',
+    pct:60,
+    burnout:null},
+  wt:{label:'Weight',value:'156',unit:'lbs',color:'var(--wt)',cls:'mc-wt',bcls:'eb-str',
+    target:'Target: 152–154 lbs (slow cut)',status:'Good',scls:'status-good',
+    desc:'0.5–0.75 lb/week deficit. Scale weight will fluctuate — trend matters more than daily number.',
+    pct:55,
+    burnout:null}
+};
+
+const NAV=[
+  {short:'Dash',type:'dash',title:'Dashboard',sub:'Health metrics + weekly overview'},
+  {short:'Mon',type:'str',title:'Full body — Session A',sub:'Strength + Apple Fitness+'},
+  {short:'Tue',type:'run',title:'Run — easy Zone 2',sub:'Evening run after Apple work'},
+  {short:'Wed',type:'str',title:'Full body — Session B',sub:'Strength + Apple Fitness+'},
+  {short:'Thu',type:'run',title:'Run — easy Zone 2',sub:'Evening run after Apple work'},
+  {short:'Fri',type:'str',title:'Full body — Session C',sub:'Strength + Apple Fitness+'},
+  {short:'Sat',type:'af',title:'Apple Fitness+ + run',sub:'AF+ morning · easy run evening'},
+  {short:'Sun',type:'rest',title:'Full rest + recovery',sub:'Walks only — no training today'}
+];
+
+function dotColor(type){
+  return type==='str'?'#c8f060':type==='run'?'#60c8f0':type==='af'?'#f060a8':type==='dash'?'#a860f0':'#55555f';
+}
+
+const DAYS=[
+{type:'str',timing:'6:00–7:30am · before Apple work',
+pills:['LIAP 3:47–6am','Strength 6–7:30am','Walk ~8am','Apple 8:30am'],
+focus:['VO2 Max','Muscle strength','Body fat','HRV'],
+focusCls:['ft-vo2','ft-str','ft-bf','ft-hrv'],
+focusWhy:'Compound bodyweight movements elevate heart rate into Zone 2–3, contributing to VO2 Max gains. Resistance training preserves muscle during your caloric deficit, directly improving body composition and definition.',
+sections:[
+{l:'Warm-up — Apple Fitness+ (8 min)',type:'af',items:[
+{name:'Yoga or mobility session',sub:'Open Apple Fitness+, pick any Yoga or Mobility session. Run 8 minutes. Focus on shoulder circles, chest openers, and hip mobility.'}
+]},
+{l:'Block 1 — Push (10 min)',type:'ex',items:[
+{name:'Incline push-ups',sets:'3 sets × 10 reps',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
+metricNote:'Builds pushing strength across chest, shoulders and triceps. Muscle mass raises your resting metabolic rate, accelerating fat loss.',
+how:['Find a wall, counter, or sturdy chair — the higher the surface, the easier the movement.','Place hands shoulder-width apart on the surface, arms fully extended.','Walk feet back until your body forms a straight diagonal line from head to heel.','Bend elbows slowly and lower your chest toward the surface (2 counts down).','Push back up to start (1 count up). Core stays tight the entire time.'],
+tip:'If 10 feels easy, use a lower surface. If it feels hard, use a higher one.',
+warn:'Hips must not sag or pike. Maintain a straight line head to heel.',
+prog:'Week 3: move to floor push-ups when you hit 3×10 with clean form.'},
+{name:'Pike push-ups',sets:'3 sets × 8 reps',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'VO2 Max',c:'eb-vo2'}],
+metricNote:'Shoulder-dominant push pattern. Elevates heart rate due to the inverted position, giving a small cardiovascular benefit on top of strength work.',
+how:['Start in a downward dog — hips high, hands and feet on the floor, body forming an inverted V.','Hands slightly wider than shoulder-width, fingers spread.','Bend elbows and lower the top of your head toward the floor between your hands.','Push back up to the inverted V. That is one rep.'],
+tip:'The higher your hips, the more shoulder load.',
+warn:'Do not let your hips drop toward the floor during the movement.'}
+]},
+{l:'Block 2 — Legs & glutes (12 min)',type:'ex',items:[
+{name:'Bodyweight squats',sets:'3 sets × 15 reps',
+badges:[{t:'VO2 Max',c:'eb-vo2'},{t:'Body fat',c:'eb-bf'},{t:'Muscle strength',c:'eb-str'}],
+metricNote:'Largest muscle groups in the body. High rep squats elevate heart rate significantly, burning more calories and contributing to VO2 Max improvement than any upper body exercise.',
+how:['Stand feet shoulder-width apart, toes turned out slightly.','Hold arms straight out in front for balance.','Push hips back and bend knees, lowering until thighs are parallel to the floor.','Drive through heels to stand. Squeeze glutes at the top.'],
+tip:'Imagine sitting back onto a chair behind you — weight stays in your heels.',
+warn:'Knees track over toes. Do not let them cave inward on the way up.',
+prog:'Week 3: add a 2-second pause at the bottom of each rep.'},
+{name:'Reverse lunges',sets:'3 sets × 10 reps each leg',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
+metricNote:'Unilateral (single leg) training builds balanced strength and burns more calories than bilateral movements. Key driver of lower body definition.',
+how:['Stand tall, feet together, hands on hips.','Step one foot back about 2–3 feet and lower your back knee toward the floor.','Both knees reach roughly 90 degrees at the bottom.','Push through your front heel to return to standing. Alternate legs.'],
+tip:'Reverse lunges are gentler on the knees than forward lunges.',
+warn:'Keep chest upright. Do not let your front knee shoot past your toes.'}
+]},
+{l:'Block 3 — Core (8 min)',type:'ex',items:[
+{name:'Dead bug',sets:'3 sets × 10 reps each side',
+badges:[{t:'HRV',c:'eb-hrv'},{t:'Muscle strength',c:'eb-str'}],
+metricNote:'Deep core stability work reduces injury risk and improves movement efficiency. Lower injury risk supports training consistency which keeps HRV stable.',
+how:['Lie on your back, arms pointing straight up toward the ceiling.','Bend knees to 90 degrees, shins parallel to the floor.','Press your lower back firmly into the floor — hold it there the entire set.','Slowly lower your right arm overhead and your left leg toward the floor simultaneously.','Stop just before they touch the floor, bring both back. Switch sides. That is one rep each side.'],
+tip:'Think of your lower back as a brace glued to the floor. If it lifts, you went too far.',
+warn:'This is slow and controlled. Speed completely defeats the purpose.'},
+{name:'Plank',sets:'3 sets × 20 seconds',
+badges:[{t:'HRV',c:'eb-hrv'},{t:'Muscle strength',c:'eb-str'}],
+metricNote:'Isometric core tension improves posture and spinal stability. Low-stress on the nervous system — good HRV management.',
+how:['Get into a push-up position but rest on forearms instead of hands.','Elbows directly under shoulders, forearms flat on the floor.','Body is a straight line from head to heels — no sagging hips, no raised backside.','Breathe normally and hold.'],
+tip:'Squeeze glutes and quads while holding — it makes the position much easier.',
+warn:'The moment your hips sag, stop and rest. Bad form builds nothing.',
+prog:'Add 5 seconds each week once the current hold feels easy.'}
+]},
+{l:'Cooldown — Apple Fitness+ (5–8 min)',type:'af',items:[
+{name:'Cooldown stretch session',sub:'Pick any Cooldown or Stretching session in Apple Fitness+. Focus on chest, shoulders, and hip flexors.'}
+]}
+]},
+
+{type:'run',timing:'6:00–6:45pm · after Apple work ends at 5:30pm',
+pills:['LIAP 3:47–6am','Apple 8:30am–5:30pm','Run 6–6:45pm'],
+focus:['VO2 Max','Resting HR','Body fat'],
+focusCls:['ft-vo2','ft-hr','ft-bf'],
+focusWhy:'Zone 2 running is the single most effective training method for improving VO2 Max and lowering resting HR over time. At easy pace your body burns primarily fat as fuel, directly targeting body fat percentage.',
+sections:[
+{l:'Your Week 1 run',type:'run',items:[
+{lbl:'Distance',val:'1.0 mi',note:'About 10–12 minutes of jogging at easy pace.'},
+{lbl:'Pace',val:'Zone 2',note:'You should hold a full conversation the entire time. If you cannot speak in sentences, slow down.'},
+{lbl:'Structure',val:'Run / walk OK',note:'3 min jog / 1 min walk and repeat is completely fine in week 1.'}
+]},
+{l:'What Zone 2 means',type:'ex',items:[
+{name:'Zone 2 running explained',sets:'The whole run',
+badges:[{t:'VO2 Max',c:'eb-vo2'},{t:'Resting HR',c:'eb-hr'},{t:'Body fat',c:'eb-bf'}],
+metricNote:'Zone 2 training is the primary driver of VO2 Max improvement. Consistent Zone 2 work lowers your resting HR over 8–12 weeks. At this intensity your body oxidizes fat as primary fuel — most effective zone for reducing body fat %.',
+how:['Zone 2 is aerobic effort — your body burns fat as fuel, heart works but is not racing.','Target feel: you can speak in full sentences but would not want to sing.','On Apple Watch: heart rate roughly 60–70% of max, around 125–145 bpm.','If your watch shows above 145 bpm, slow down or walk for 30 seconds.','At the end you should feel like you could have kept going. That is correct.'],
+tip:'Most beginners run too fast. Zone 2 feels embarrassingly slow at first. That is exactly right.',
+warn:'Do not skip the easy pace in week 1. Running too hard too soon is the #1 cause of early burnout.'}
+]},
+{l:'Post-run stretch (5 min)',type:'ex',items:[
+{name:'Standing quad stretch',sets:'30 seconds each leg',badges:[{t:'HRV',c:'eb-hrv'}],
+metricNote:'Post-run stretching reduces muscular tension and supports parasympathetic nervous system recovery — which directly improves HRV.',
+how:['Stand on one leg. Bend the other knee and hold your ankle behind you.','Keep knees together. Stand tall. Hold 30 seconds each side.'],
+tip:'Hold a wall if balance is tricky.',warn:''},
+{name:'Calf stretch against a wall',sets:'30 seconds each leg',badges:[{t:'HRV',c:'eb-hrv'}],
+metricNote:'Calf tightness after running restricts blood flow. Stretching supports faster recovery and better overnight HRV scores.',
+how:['Face a wall. Step one foot back, keep that heel flat on the ground.','Lean gently into the wall with the back leg straight until you feel the calf stretch.','Hold 30 seconds each side.'],
+tip:'Flex your foot (toes toward you) to deepen the stretch.',warn:''}
+]}
+]},
+
+{type:'str',timing:'6:00–7:30am · before Apple work',
+pills:['LIAP 3:47–6am','Strength 6–7:30am','Walk ~8am','Apple 8:30am'],
+focus:['Muscle strength','Body fat','HRV','VO2 Max'],
+focusCls:['ft-str','ft-bf','ft-hrv','ft-vo2'],
+focusWhy:'Session B rotates to pulling and squatting patterns, ensuring full body balance. Balanced strength development protects joints and reduces injury risk — which keeps your HRV stable and training consistent.',
+sections:[
+{l:'Warm-up — Apple Fitness+ (8 min)',type:'af',items:[
+{name:'HIIT warm-up or Pilates',sub:'Choose a short HIIT or Pilates session in Apple Fitness+. Aim for something that activates glutes, opens hips, and warms up the back.'}
+]},
+{l:'Block 1 — Pull (10 min)',type:'ex',items:[
+{name:'Table rows',sets:'3 sets × 10 reps',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
+metricNote:'Back and bicep pulling strength. Balances the pushing work from Monday. Muscle balance reduces injury risk and supports training longevity.',
+how:['Find a sturdy table. Lie on your back underneath it.','Grip the edge with both hands, palms facing you (underhand), shoulder-width apart.','Body hangs straight — heels on floor, body like a plank.','Pull your chest up toward the table edge, squeezing shoulder blades together at the top.','Lower slowly back down. That is one rep.'],
+tip:'The more horizontal your body, the harder it gets. Start with a slight angle.',
+warn:'Do not shrug shoulders up to your ears. Keep them pulled back and down.',
+prog:'Week 5: elevate feet on a chair to increase difficulty.'},
+{name:'Superman hold',sets:'3 sets × 12 reps (2 sec hold each)',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'HRV',c:'eb-hrv'}],
+metricNote:'Posterior chain activation — lower back, glutes, and rear shoulders. A strong posterior chain reduces chronic tension and supports better sleep quality, which directly improves HRV.',
+how:['Lie face down, arms stretched overhead, legs straight.','Simultaneously lift arms, chest, and legs off the floor.','Hold 2 seconds at the top. Lower back down. That is one rep.'],
+tip:'Think of reaching your fingertips as far forward as possible as you lift.',
+warn:'Do not look up. Keep neck in line with your spine — eyes toward the floor.'}
+]},
+{l:'Block 2 — Legs (12 min)',type:'ex',items:[
+{name:'Sumo squats',sets:'3 sets × 15 reps',
+badges:[{t:'VO2 Max',c:'eb-vo2'},{t:'Body fat',c:'eb-bf'},{t:'Muscle strength',c:'eb-str'}],
+metricNote:'Wide stance targets inner thighs and glutes differently to Monday squats. High-rep leg work significantly elevates heart rate — one of the best bodyweight exercises for VO2 Max and calorie burn.',
+how:['Stand feet wider than shoulder-width, toes pointed out at about 45 degrees.','Hold arms in front or clasp hands at chest.','Sit straight down between your legs, keeping chest tall.','Drive back up through heels, squeeze glutes at the top.'],
+tip:'This variation targets inner thighs and glutes more than a standard squat.',
+warn:'Let knees track in the direction your toes point — do not force them forward.'},
+{name:'Glute bridges',sets:'3 sets × 15 reps',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
+metricNote:'Glutes are the largest muscle in the body. Strong glutes improve running economy, which over time elevates your VO2 Max and makes runs feel easier.',
+how:['Lie on your back, knees bent, feet flat on floor hip-width apart.','Arms resting at sides, palms down.','Drive through heels and squeeze glutes to lift hips toward the ceiling.','At the top, body forms a straight line from knees to shoulders.','Hold 1 second at the top. Lower slowly. That is one rep.'],
+tip:'The squeeze at the top is what actually builds the glutes. Do not skip it.',
+warn:'Do not hyperextend your lower back. Stop when hips align with your torso.',
+prog:'Week 5: single-leg glute bridges — one foot elevated.'}
+]},
+{l:'Block 3 — Core (8 min)',type:'ex',items:[
+{name:'Bicycle crunches',sets:'3 sets × 12 reps each side',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
+metricNote:'Rotational core work targets obliques — the muscles responsible for the defined V-shape as body fat decreases. Core strength also improves running form.',
+how:['Lie on your back, hands lightly behind your head — do not pull on your neck.','Lift both feet off the ground, knees bent at 90 degrees.','Bring right elbow toward left knee while extending your right leg.','Switch sides in a slow, controlled pedaling motion. That is one rep each side.'],
+tip:'Slow is better. One controlled rep beats five fast sloppy ones every time.',
+warn:'Rotation comes from your torso, not from yanking your neck forward.'},
+{name:'Side plank',sets:'3 sets × 20 seconds each side',
+badges:[{t:'HRV',c:'eb-hrv'},{t:'Muscle strength',c:'eb-str'}],
+metricNote:'Lateral core stability — protects the spine during running and daily movement. Low nervous system demand makes this a good HRV-friendly exercise.',
+how:['Lie on your side. Prop up on one forearm, elbow directly under shoulder.','Stack feet or stagger them for more stability.','Lift hips so body forms a straight line from head to feet.','Hold. Breathe. Switch sides after each set.'],
+tip:'Place your top hand on your hip to help with balance.',
+warn:'Hips must not sag toward the floor during the hold.',
+prog:'Add 5 seconds per week when the current hold feels comfortable.'}
+]},
+{l:'Cooldown — Apple Fitness+ (5–8 min)',type:'af',items:[
+{name:'Cooldown stretch',sub:'Pick any Cooldown or Yoga session. Focus on lower back, hamstrings, and hip flexors today.'}
+]}
+]},
+
+{type:'run',timing:'6:00–6:45pm · after Apple work ends at 5:30pm',
+pills:['LIAP 3:47–6am','Apple 8:30am–5:30pm','Run 6–6:45pm'],
+focus:['VO2 Max','Resting HR','Body fat'],
+focusCls:['ft-vo2','ft-hr','ft-bf'],
+focusWhy:'Second Zone 2 run of the week. Two easy runs per week builds aerobic base faster than one hard run. The cumulative effect on VO2 Max and resting HR compounds over weeks.',
+sections:[
+{l:'Your Week 1 run',type:'run',items:[
+{lbl:'Distance',val:'1.0 mi',note:'Same as Tuesday. Identical easy effort — this is not a race against your Tuesday self.'},
+{lbl:'Pace',val:'Zone 2',note:'Conversational the whole time. Heart rate under ~145 bpm.'},
+{lbl:'Mindset',val:'Easy & consistent',note:'Two easy runs per week builds aerobic base faster than one hard run. Trust it.'}
+]},
+{l:'Post-run stretch (5 min)',type:'ex',items:[
+{name:'Hip flexor stretch — kneeling lunge',sets:'30 seconds each side',
+badges:[{t:'HRV',c:'eb-hrv'}],
+metricNote:'Hip flexors tighten from both running and desk sitting. Chronic tightness restricts movement quality and increases injury risk. Flexibility supports recovery and HRV.',
+how:['Kneel on one knee, other foot forward in a lunge position.','Shift hips forward gently until you feel a stretch at the front of the back hip.','Keep torso upright. Hold 30 seconds each side.'],
+tip:'This undoes the hip flexor tightness that running and desk sitting both create.',warn:''},
+{name:'Seated hamstring stretch',sets:'30 seconds each leg',
+badges:[{t:'HRV',c:'eb-hrv'}],
+metricNote:'Hamstring flexibility reduces posterior chain tension. Loose hamstrings improve running stride length and efficiency — better economy means improved VO2 Max over time.',
+how:['Sit on the floor, one leg extended, other foot tucked in.','Reach toward your extended foot — or as far as comfortable.','Hold 30 seconds each side.'],
+tip:'Flexing your foot (toes toward you) increases the stretch significantly.',warn:''}
+]}
+]},
+
+{type:'str',timing:'6:00–7:30am · before Apple work',
+pills:['LIAP 3:47–6am','Strength 6–7:30am','Walk ~8am','Apple 8:30am'],
+focus:['Muscle strength','Body fat','VO2 Max','HRV'],
+focusCls:['ft-str','ft-bf','ft-vo2','ft-hrv'],
+focusWhy:'Session C introduces posterior chain emphasis — the muscles along the back of the body. These are critical for posture, running performance, and the lean physique you are building.',
+sections:[
+{l:'Warm-up — Apple Fitness+ (8 min)',type:'af',items:[
+{name:'Dance Fitness or Kickboxing warm-up',sub:'Pick something fun today. Dance Fitness or Kickboxing gets the heart rate up and loosens everything. Run the first 8 minutes.'}
+]},
+{l:'Block 1 — Push variation (10 min)',type:'ex',items:[
+{name:'Wide-grip push-ups',sets:'3 sets × 8 reps',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
+metricNote:'Wider hand placement shifts emphasis to the outer chest. Chest width and thickness becomes visible as body fat drops toward your 12–13% target.',
+how:['Get into a push-up position. Place hands wider than shoulder-width — about 1.5x.','Lower chest toward the floor with elbows flaring slightly outward.','Push back up. This targets the outer chest more than standard push-ups.'],
+tip:'If floor is too hard, do these on a low counter or bench.',
+warn:'Core stays tight — hips do not sag or pike.'},
+{name:'Tricep dips (floor)',sets:'3 sets × 10 reps',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
+metricNote:'Triceps make up two thirds of upper arm size. Direct tricep training creates the arm definition that becomes visible as body fat decreases.',
+how:['Sit on the floor, knees bent, feet flat. Place hands just behind your hips, fingers pointing forward.','Press into hands to lift your hips off the floor.','Bend elbows and lower your hips toward the floor — do not touch.','Press back up. That is one rep.'],
+tip:'For more intensity, elevate hands on a chair behind you.',
+warn:'Keep elbows pointing straight back — not flaring out to the sides.'}
+]},
+{l:'Block 2 — Posterior chain (12 min)',type:'ex',items:[
+{name:'Good mornings (bodyweight)',sets:'3 sets × 12 reps',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'VO2 Max',c:'eb-vo2'}],
+metricNote:'Hip hinge movement strengthens hamstrings and lower back. A strong posterior chain improves running economy — your body moves more efficiently, which raises VO2 Max over time.',
+how:['Stand feet hip-width, slight bend in knees.','Place hands lightly behind your head or cross arms at chest.','Hinge at your hips — push them back while your chest lowers toward the floor.','Keep your back flat throughout. Lower until you feel a stretch in your hamstrings.','Drive hips forward to stand back up. Squeeze glutes at the top.'],
+tip:'Think of a door hinge — movement comes entirely from the hips, not the lower back.',
+warn:'Do not round your back. If your back curves, you have gone too far.'},
+{name:'Wall sit',sets:'3 sets × 30 seconds',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
+metricNote:'Isometric quad hold builds quad endurance and mental toughness. The sustained tension burns significant calories for a static movement.',
+how:['Stand with your back flat against a wall.','Slide down until thighs are parallel to the floor — like sitting in an invisible chair.','Feet flat on the floor, knees at 90 degrees, back against the wall.','Hold and breathe.'],
+tip:'Arms can rest on thighs or extend straight out in front.',
+warn:'Knees should be above ankles — do not let them drift forward past your feet.',
+prog:'Add 10 seconds each week when the current hold feels manageable.'},
+{name:'Step-ups',sets:'3 sets × 10 reps each leg',
+badges:[{t:'VO2 Max',c:'eb-vo2'},{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
+metricNote:'Single leg elevation raises heart rate considerably. Mimics running mechanics — training this movement directly improves your running efficiency and VO2 Max.',
+how:['Find a sturdy chair, stair, or low box.','Step up with your right foot, pressing through that heel to bring your left foot up to meet it.','Step back down with your right foot first.','Complete all reps on one leg, then switch.'],
+tip:'Use a lower surface if balance is tricky at first.',
+warn:'Drive through the heel of the working leg. Do not push off the back foot.'}
+]},
+{l:'Block 3 — Core (8 min)',type:'ex',items:[
+{name:'Reverse crunches',sets:'3 sets × 12 reps',
+badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
+metricNote:'Lower ab focus. The lower abdomen is often the last area to show definition — direct training here, combined with your caloric deficit, accelerates that result.',
+how:['Lie on your back, arms flat at sides, palms pressing the floor.','Bend knees to 90 degrees, shins parallel to the floor.','Use your lower abs to curl hips off the floor, bringing knees toward your chest.','Slowly lower hips back down without letting feet touch. That is one rep.'],
+tip:'The movement is small and controlled — not a big swinging motion.',
+warn:'If you feel your lower back taking over, slow down and reduce range.'},
+{name:'Plank shoulder taps',sets:'3 sets × 10 taps each side',
+badges:[{t:'HRV',c:'eb-hrv'},{t:'Muscle strength',c:'eb-str'}],
+metricNote:'Anti-rotation core stability. Training the core to resist movement (not just create it) is what builds the functional strength that carries over to running and daily life.',
+how:['Get into a high push-up position — arms extended, hands under shoulders.','Keep hips as still as possible while lifting one hand to tap the opposite shoulder.','Place hand back, then tap with the other. That is one rep each side.'],
+tip:'Wider feet make this easier to balance.',
+warn:'Do not let hips rock side to side — that defeats the entire exercise.'}
+]},
+{l:'Cooldown — Apple Fitness+ (5–8 min)',type:'af',items:[
+{name:'Cooldown stretch',sub:'Choose Cooldown or Stretching in Apple Fitness+. Prioritize quads, glutes, and lower back after this session.'}
+]}
+]},
+
+{type:'af',timing:'AF+ 8–9am · Run 6–7pm',
+pills:['AF+ morning 8–9am','Walk optional','Run evening 6–7pm'],
+focus:['VO2 Max','Body fat','Resting HR','HRV'],
+focusCls:['ft-vo2','ft-bf','ft-hr','ft-hrv'],
+focusWhy:'Saturday is your highest training volume day — a full AF+ session plus a run. The combination of varied cardio in the morning and steady Zone 2 in the evening creates a powerful stimulus for both VO2 Max improvement and fat oxidation.',
+sections:[
+{l:'Morning — Apple Fitness+ full session (30–35 min)',type:'af',items:[
+{name:'HIIT, Dance Fitness, or Kickboxing',sub:'This is the day AF+ runs the full workout. Pick HIIT for max output, Dance Fitness for something enjoyable, or Kickboxing if you want to hit something. All valid. ~30 min guided session.'},
+{name:'How to choose',sub:'High energy → HIIT or Kickboxing. Moderate energy → Dance Fitness. Lower energy → Pilates or Yoga. Listen to your body — there is a run later.'}
+]},
+{l:'Evening run — 1.0 mile',type:'run',items:[
+{lbl:'Distance',val:'1.0 mi',note:'Third run of the week. Same Zone 2 easy effort as Tuesday and Thursday.'},
+{lbl:'Timing',val:'~6–7pm',note:'A few hours after the morning AF+ session. If legs feel very heavy, shorten to 0.75 mi — no problem.'},
+{lbl:'From week 7',val:'Longest run day',note:'Once your base builds, Saturday gradually becomes your longest run of the week.'}
+]},
+{l:'Post-run stretch (5–8 min)',type:'ex',items:[
+{name:'Full body stretch sequence',sets:'5–8 minutes total',
+badges:[{t:'HRV',c:'eb-hrv'}],
+metricNote:'Saturday carries the most training load of the week. A thorough stretch here directly supports overnight recovery — which shows up as a better HRV score on Sunday morning.',
+how:['Calves: step one foot back, heel flat, lean into wall. 30 sec each side.','Quads: stand on one foot, pull ankle to glute. 30 sec each side.','Hip flexors: kneeling lunge, shift hips forward. 30 sec each side.','Glutes: lie on back, cross ankle over knee, pull both legs toward chest. 30 sec each side.'],
+tip:'Saturday is your highest training load day — take the stretch seriously.',warn:''}
+]}
+]},
+
+{type:'rest',timing:'Rest day · let the week absorb',
+pills:['Walk ~8am','Walk ~6–7pm','No strength','No run'],
+focus:['HRV','Resting HR'],
+focusCls:['ft-hrv','ft-hr'],
+focusWhy:'Rest is where adaptation happens. Your VO2 Max, strength gains, and body composition improvements are all locked in during recovery — not during training. This day protects your HRV and ensures next week starts fresh.',
+sections:[
+{l:'Today',type:'rest',items:[
+{name:'Morning walk (~8am)',sub:'Easy, leisurely pace. No effort target. This is recovery, not training.'},
+{name:'Evening walk (~6–7pm)',sub:'Same. Let your body absorb everything from the week.'},
+{name:'Optional: Apple Fitness+ yoga or meditation',sub:'10–15 min restorative session only. Nothing intense. Completely optional.'}
+]},
+{l:'Weekly health check-in',type:'rest',items:[
+{name:'Check HRV in Apple Health',sub:'If HRV is below 50ms — reduce intensity next week. If above 65ms — you recovered well.'},
+{name:'Check resting HR',sub:'Above 65 bpm is a warning sign. Below 60 bpm means recovery is solid.'},
+{name:'Check VO2 Max trend',sub:'Declining 3+ weeks in a row means training load is exceeding recovery capacity. Time to deload.'},
+{name:'Weight check',sub:'Weekly weigh-in. Look for 0.5–0.75 lb downward trend. Daily fluctuations are normal — ignore them.'},
+{name:'LIAP planning',sub:'Plan your LIAP block schedule for next week so mornings stay protected before strength sessions.'}
+]}
+]}
+];
+
+let sel=0;
+
+function renderNav(){
+  const strip=document.getElementById('nav-strip');
+  strip.innerHTML=NAV.map((d,i)=>`
+    <div class="nav-btn ${i===sel?'sel':''}" data-type="${d.type}" onclick="go(${i})">
+      <div class="n-label">${d.short}</div>
+      <div class="n-dot" style="background:${dotColor(d.type)}"></div>
+    </div>`).join('');
+}
+
+function renderDashboard(){
+  document.getElementById('top-title').textContent='Dashboard';
+  document.getElementById('top-sub').textContent='Health metrics + weekly overview';
+
+  const mk=Object.values(METRICS);
+  let h=`<div class="dash-section">
+    <div class="dash-title">Your current metrics</div>
+    <div class="dash-sub">Updated from Apple Health. Sync weekly on Sunday during your check-in.</div>
+    <div class="metrics-grid">`;
+
+  mk.slice(0,4).forEach(m=>{
+    h+=`<div class="metric-card ${m.cls}">
+      <div class="metric-label">${m.label}</div>
+      <div class="metric-value">${m.value}<span class="metric-unit">${m.unit}</span></div>
+      <span class="metric-status ${m.scls}">${m.status}</span>
+      <div class="metric-target">${m.target}</div>
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:${m.pct}%;background:${m.color}"></div></div>
+    </div>`;
+  });
+  h+=`</div>`;
+
+  const wt=mk[4];
+  h+=`<div class="metric-card-full ${wt.cls}">
+    <div class="metric-label">${wt.label}</div>
+    <div class="metric-value">${wt.value}<span class="metric-unit">${wt.unit}</span></div>
+    <span class="metric-status ${wt.scls}">${wt.status}</span>
+    <div class="metric-target">${wt.target}</div>
+    <div class="progress-bar-wrap"><div class="progress-bar" style="width:${wt.pct}%;background:${wt.color}"></div></div>
+  </div>`;
+
+  h+=`</div><div class="dash-section">
+    <div class="dash-title">What each metric means</div>
+    <div class="dash-sub">Tap any metric above to understand what drives it.</div>`;
+
+  mk.forEach(m=>{
+    h+=`<div class="burnout-card">
+      <div class="burnout-title">${m.label}</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:8px">${m.desc}</div>
+    </div>`;
+  });
+
+  h+=`</div><div class="dash-section">
+    <div class="dash-title">Burnout warning thresholds</div>
+    <div class="dash-sub">Check these every Sunday. If any hit the warning level, reduce next week's intensity.</div>
+    <div class="burnout-card">
+      <div class="burnout-row"><span class="burnout-label">HRV drops below</span><span class="burnout-val burnout-warn">50ms &rarr; reduce intensity</span></div>
+      <div class="burnout-row"><span class="burnout-label">Resting HR above</span><span class="burnout-val burnout-warn">65 bpm &rarr; reduce intensity</span></div>
+      <div class="burnout-row"><span class="burnout-label">VO2 Max declining</span><span class="burnout-val burnout-warn">3+ weeks &rarr; deload week</span></div>
+      <div class="burnout-row"><span class="burnout-label">Current HRV</span><span class="burnout-val burnout-ok">68ms &rarr; all good</span></div>
+      <div class="burnout-row"><span class="burnout-label">Current resting HR</span><span class="burnout-val burnout-ok">57 bpm &rarr; all good</span></div>
+      <div class="burnout-row"><span class="burnout-label">Current VO2 Max</span><span class="burnout-val burnout-ok">43.7 &rarr; trending up</span></div>
+    </div>
+  </div>
+  <div class="updated-note">Metrics last updated: April 2026 · Update every Sunday via Apple Health</div>`;
+
+  document.getElementById('content').innerHTML=h;
+}
+
+function renderDay(dayIdx){
+  const d=DAYS[dayIdx];
+  const nav=NAV[dayIdx+1];
+  document.getElementById('top-title').textContent=(['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'])[dayIdx];
+  document.getElementById('top-sub').textContent=nav.title;
+
+  const tagClass={'str':'s-tag-str','run':'s-tag-run','af':'s-tag-af','rest':'s-tag-rest'}[d.type];
+  const tagLabel={'str':'Strength','run':'Run','af':'AF+ Day','rest':'Rest'}[d.type];
+  const timingClass={'str':'t-str','run':'t-run','af':'t-af','rest':'t-rest'}[d.type];
+
+  let h=`<span class="s-tag ${tagClass}">${tagLabel}</span>
+    <div class="s-title">${nav.title}</div>
+    <div class="s-sub">${nav.sub}</div>
+    <div class="s-timing ${timingClass}">${d.timing}</div>`;
+
+  h+=`<div class="day-summary">
+    <div class="day-summary-title">Today's metric focus</div>
+    <div class="focus-tags">${d.focus.map((f,i)=>`<span class="focus-tag ${d.focusCls[i]}">${f}</span>`).join('')}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6">${d.focusWhy}</div>
+  </div>`;
+
+  d.sections.forEach(s=>{
+    h+=`<div class="sec-lbl">${s.l}</div>`;
+    if(s.type==='af'){
+      s.items.forEach(it=>{h+=`<div class="af-block"><div class="af-name">${it.name}</div><div class="af-sub">${it.sub}</div></div>`;});
+    } else if(s.type==='run'){
+      const grid=s.items.filter(it=>it.lbl);
+      const exs=s.items.filter(it=>!it.lbl);
+      if(grid.length===2){
+        h+=`<div class="run-grid">`;
+        grid.slice(0,2).forEach(it=>{h+=`<div class="run-card"><div class="run-lbl">${it.lbl}</div><div class="run-val">${it.val}</div><div class="run-note">${it.note}</div></div>`;});
+        h+=`</div>`;
+        if(grid[2]) h+=`<div class="run-card-full"><div class="run-lbl">${grid[2].lbl}</div><div class="run-val">${grid[2].val}</div><div class="run-note">${grid[2].note}</div></div>`;
+      } else {
+        grid.forEach(it=>{h+=`<div class="run-card-full"><div class="run-lbl">${it.lbl}</div><div class="run-val">${it.val}</div><div class="run-note">${it.note}</div></div>`;});
+      }
+      exs.forEach((it,idx)=>{h+=buildEx(it,`${dayIdx}-${s.l}-${idx}`);});
+    } else if(s.type==='rest'){
+      s.items.forEach(it=>{h+=`<div class="rest-card"><div class="rest-name">${it.name}</div><div class="rest-sub">${it.sub}</div></div>`;});
+    } else {
+      s.items.forEach((it,idx)=>{h+=buildEx(it,`${dayIdx}-${s.l}-${idx}`);});
+    }
+  });
+
+  h+=`<div class="pill-row">${d.pills.map(p=>`<span class="pill">${p}</span>`).join('')}</div>`;
+  document.getElementById('content').innerHTML=h;
+}
+
+function buildEx(it,uid){
+  const badges=(it.badges||[]).map(b=>`<span class="ex-badge ${b.c}">${b.t}</span>`).join('');
+  let h=`<div class="ex" id="ex-${uid}">
+    <div class="ex-hdr" onclick="toggleEx('${uid}')">
+      <div class="ex-left">
+        <div class="ex-name">${it.name}</div>
+        <div class="ex-sets">${it.sets||''}</div>
+        ${badges?`<div class="ex-badges">${badges}</div>`:''}
+      </div>
+      <div class="ex-arr">&#9662;</div>
+    </div>
+    <div class="ex-body">`;
+  if(it.metricNote) h+=`<div class="callout c-metric"><div class="c-lbl">Why this helps your metrics</div>${it.metricNote}</div>`;
+  if(it.how&&it.how.length){
+    h+=`<div class="how-lbl">How to do it</div>`;
+    it.how.forEach((step,i)=>{h+=`<div class="how-step"><div class="how-n">${i+1}</div><div>${step}</div></div>`;});
+  }
+  if(it.tip) h+=`<div class="callout c-tip"><div class="c-lbl">Tip</div>${it.tip}</div>`;
+  if(it.warn) h+=`<div class="callout c-warn"><div class="c-lbl">Watch out</div>${it.warn}</div>`;
+  if(it.prog) h+=`<div class="callout c-prog"><div class="c-lbl">Progression</div>${it.prog}</div>`;
+  h+=`</div></div>`;
+  return h;
+}
+
+function toggleEx(uid){
+  document.getElementById('ex-'+uid).classList.toggle('open');
+}
+
+function go(i){
+  sel=i;
+  renderNav();
+  if(i===0) renderDashboard();
+  else renderDay(i-1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+const today=new Date().getDay();
+const startDay=today===0?7:today;
+sel=startDay===7?0:startDay;
+renderNav();
+if(sel===0) renderDashboard();
+else renderDay(sel-1);
+</script>
+</body>
+</html>
