@@ -5,153 +5,80 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Workout">
-<title>Week 1 Workout</title>
+<meta name="apple-mobile-web-app-title" content="Health">
+<title>Week 1 · Health Plan</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0e0e0f;--surf:#17171a;--surf2:#202024;--border:#2a2a2f;
   --text:#f0efe8;--muted:#65656f;
   --str:#c8f060;--run:#60c8f0;--af:#f060a8;--rest:#55555f;
-  --good:#c8f060;--warn:#f0a860;--bad:#f06060;--info:#60c8f0;--purple:#c060f0;
+  --nut:#f0a860;--sleep:#a860f0;--health:#60f0a8;
   --fh:'Syne',sans-serif;--fm:'DM Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);font-family:var(--fm);min-height:100vh;overscroll-behavior:none}
-body{padding-bottom:60px}
-
+body{padding-bottom:80px}
 .topbar{position:sticky;top:0;z-index:100;background:rgba(14,14,15,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 20px 12px}
 .safe-top{height:env(safe-area-inset-top,0px)}
 .top-eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
 .top-title{font-family:var(--fh);font-size:22px;font-weight:800;line-height:1}
 .top-sub{font-size:11px;color:var(--muted);margin-top:3px}
-
-.nav-strip{display:flex;gap:6px;padding:12px 20px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
-.nav-strip::-webkit-scrollbar{display:none}
-.nav-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surf);cursor:pointer;transition:all .15s}
-.nav-btn .n-label{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted)}
-.n-dot{width:5px;height:5px;border-radius:50%}
-.nav-btn.active-dash{border-color:var(--purple);background:#1a0a22}
-.nav-btn.active-dash .n-label{color:var(--purple)}
-.nav-btn.active-str{border-color:var(--str);background:#141c08}
-.nav-btn.active-str .n-label{color:var(--str)}
-.nav-btn.active-run{border-color:var(--run);background:#081620}
-.nav-btn.active-run .n-label{color:var(--run)}
-.nav-btn.active-af{border-color:var(--af);background:#200a14}
-.nav-btn.active-af .n-label{color:var(--af)}
-.nav-btn.active-rest{border-color:var(--muted);background:#141416}
-.nav-btn.active-rest .n-label{color:var(--muted)}
-
-.content{padding:20px}
-
-/* ── DASHBOARD ── */
-.dash-h{font-family:var(--fh);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:24px 0 10px;display:flex;align-items:center;gap:10px}
-.dash-h::after{content:'';flex:1;height:1px;background:var(--border)}
-.dash-h:first-child{margin-top:0}
-
-.alert-card{border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start}
-.alert-warn{background:#1e1308;border:1px solid #3a2510}
-.alert-bad{background:#1e0808;border:1px solid #3a1010}
-.alert-good{background:#0f1a06;border:1px solid #2a3a10}
-.alert-icon{font-size:14px;flex-shrink:0;margin-top:1px}
-.alert-title{font-family:var(--fh);font-size:13px;font-weight:700;margin-bottom:3px}
-.alert-warn .alert-title{color:var(--warn)}
-.alert-bad .alert-title{color:var(--bad)}
-.alert-good .alert-title{color:var(--good)}
-.alert-body{font-size:11px;color:var(--muted);line-height:1.6}
-
-.metrics-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.metrics-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
-.m-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:12px 14px;position:relative;overflow:hidden}
-.m-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
-.m-card.c-good::before{background:var(--good)}
-.m-card.c-warn::before{background:var(--warn)}
-.m-card.c-bad::before{background:var(--bad)}
-.m-card.c-info::before{background:var(--info)}
-.m-card.c-purple::before{background:var(--purple)}
-.m-card.c-muted::before{background:var(--muted)}
-.m-lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
-.m-val{font-family:var(--fh);font-size:22px;font-weight:800;line-height:1}
-.m-unit{font-size:11px;color:var(--muted);margin-left:2px}
-.m-sub{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.4}
-.m-status{display:inline-block;font-size:10px;padding:2px 7px;border-radius:8px;margin-top:5px;font-weight:500}
-.s-good{background:#141c08;color:var(--good)}
-.s-warn{background:#1e1308;color:var(--warn)}
-.s-bad{background:#1e0808;color:var(--bad)}
-.s-info{background:#081620;color:var(--info)}
-
-.bar-wrap{height:4px;background:var(--surf2);border-radius:2px;margin-top:8px;overflow:hidden}
-.bar{height:100%;border-radius:2px}
-
-.week-table{background:var(--surf);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:8px}
-.wt-row{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px}
-.wt-row:last-child{border-bottom:none}
-.wt-day{color:var(--muted);min-width:32px}
-.wt-val{font-weight:500;text-align:right}
-.wt-bar-wrap{flex:1;height:4px;background:var(--surf2);border-radius:2px;margin:0 10px;overflow:hidden}
-.wt-bar{height:100%;border-radius:2px}
-.wt-flag{font-size:10px;margin-left:6px}
-
-.sleep-row{display:flex;gap:3px;align-items:center;height:16px;border-radius:4px;overflow:hidden;margin-bottom:4px}
-.sleep-seg{height:100%;border-radius:2px}
-.sleep-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
-.sl-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
-.sl-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-
-.macro-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
-.macro-row:last-child{border-bottom:none}
-.macro-lbl{color:var(--muted)}
-.macro-vals{display:flex;gap:12px;align-items:center}
-.macro-avg{font-weight:500}
-.macro-tgt{font-size:10px;color:var(--muted)}
-.macro-flag{font-size:10px;padding:1px 6px;border-radius:6px}
-
-/* ── WORKOUT DAY ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(14,14,15,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;padding:8px 0 env(safe-area-inset-bottom,8px)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px;cursor:pointer;border:none;background:none;color:var(--muted);font-family:var(--fm);transition:color .15s}
+.nav-btn.active{color:var(--text)}
+.nav-icon{font-size:18px;line-height:1}
+.nav-label{font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.day-strip{display:flex;gap:6px;padding:12px 20px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
+.day-strip::-webkit-scrollbar{display:none}
+.day-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surf);cursor:pointer;transition:all .15s}
+.day-btn[data-type="str"].sel{border-color:var(--str);background:#141c08}
+.day-btn[data-type="run"].sel{border-color:var(--run);background:#081620}
+.day-btn[data-type="rest"].sel{border-color:var(--muted);background:#141416}
+.day-btn[data-type="mix"].sel{border-color:var(--nut);background:#201408}
+.d-label{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);transition:color .15s}
+.day-btn[data-type="str"].sel .d-label{color:var(--str)}
+.day-btn[data-type="run"].sel .d-label{color:var(--run)}
+.day-btn[data-type="rest"].sel .d-label{color:var(--muted)}
+.day-btn[data-type="mix"].sel .d-label{color:var(--nut)}
+.d-dot{width:5px;height:5px;border-radius:50%}
+.content{padding:20px;display:none}
+.content.active{display:block}
 .s-tag{display:inline-block;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:6px;margin-bottom:12px}
 .s-tag-str{background:#141c08;color:var(--str);border:1px solid #263610}
 .s-tag-run{background:#081620;color:var(--run);border:1px solid #103050}
-.s-tag-af{background:#200a14;color:var(--af);border:1px solid #401828}
 .s-tag-rest{background:#141416;color:var(--muted);border:1px solid var(--border)}
+.s-tag-mix{background:#201408;color:var(--nut);border:1px solid #403010}
+.s-tag-nut{background:#201408;color:var(--nut);border:1px solid #403010}
+.s-tag-sleep{background:#180a28;color:var(--sleep);border:1px solid #301848}
+.s-tag-health{background:#081a12;color:var(--health);border:1px solid #103828}
 .s-title{font-family:var(--fh);font-size:24px;font-weight:800;line-height:1.1;margin-bottom:4px}
 .s-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:8px}
-.s-timing{font-size:11px;font-weight:500;padding:6px 10px;border-radius:6px;display:inline-block;margin-bottom:16px}
+.s-timing{font-size:11px;font-weight:500;padding:6px 10px;border-radius:6px;display:inline-block;margin-bottom:22px}
 .t-str{background:#141c08;color:var(--str)}
 .t-run{background:#081620;color:var(--run)}
-.t-af{background:#200a14;color:var(--af)}
 .t-rest{background:#141416;color:var(--muted)}
-
-.focus-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:20px}
-.focus-title{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.focus-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.focus-tag{font-size:11px;padding:3px 9px;border-radius:8px;font-weight:500}
-.ft-vo2{background:#081620;color:var(--run);border:1px solid #103050}
-.ft-hr{background:#200a14;color:var(--af);border:1px solid #401828}
-.ft-hrv{background:#141c08;color:var(--good);border:1px solid #263610}
-.ft-bf{background:#1e1308;color:var(--warn);border:1px solid #362008}
-.ft-str{background:#1a0a22;color:var(--purple);border:1px solid #2e1040}
-.focus-why{font-size:11px;color:var(--muted);line-height:1.6}
-
-.sec-lbl{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:10px}
+.t-mix{background:#201408;color:var(--nut)}
+.t-nut{background:#201408;color:var(--nut)}
+.t-sleep{background:#180a28;color:var(--sleep)}
+.t-health{background:#081a12;color:var(--health)}
+.sec-lbl{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px;display:flex;align-items:center;gap:10px}
 .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
-
 .af-block{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--af);border-radius:12px;padding:14px 16px;margin-bottom:8px}
 .af-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:5px}
 .af-sub{font-size:12px;color:var(--muted);line-height:1.6}
-
-.ex{background:var(--surf);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.nut-block{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--nut);border-radius:12px;padding:14px 16px;margin-bottom:8px}
+.nut-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:5px;color:var(--nut)}
+.nut-sub{font-size:12px;color:var(--muted);line-height:1.6}
+.sleep-block{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--sleep);border-radius:12px;padding:14px 16px;margin-bottom:8px}
+.sleep-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:5px;color:var(--sleep)}
+.sleep-sub{font-size:12px;color:var(--muted);line-height:1.6}
+.ex{background:var(--surf);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;transition:border-color .15s}
 .ex.open{border-color:#383840}
 .ex-hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;gap:12px;user-select:none}
 .ex-hdr:active{background:var(--surf2)}
-.ex-left{flex:1;min-width:0}
 .ex-name{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
-.ex-sets{font-size:11px;color:var(--str);font-weight:500;margin-bottom:5px}
-.ex-badges{display:flex;gap:5px;flex-wrap:wrap}
-.ex-badge{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500}
-.eb-vo2{background:#081620;color:var(--run);border:1px solid #103050}
-.eb-hr{background:#200a14;color:var(--af);border:1px solid #401828}
-.eb-hrv{background:#141c08;color:var(--good);border:1px solid #263610}
-.eb-bf{background:#1e1308;color:var(--warn);border:1px solid #362008}
-.eb-str{background:#1a0a22;color:var(--purple);border:1px solid #2e1040}
+.ex-sets{font-size:11px;color:var(--str);font-weight:500}
 .ex-arr{font-size:13px;color:var(--muted);transition:transform .2s;flex-shrink:0}
 .ex.open .ex-arr{transform:rotate(180deg)}
 .ex-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}
@@ -163,9 +90,8 @@ body{padding-bottom:60px}
 .c-tip{background:#121a07;color:#9acc38;border:1px solid #203608}
 .c-warn{background:#1e1308;color:#d09040;border:1px solid #362008}
 .c-prog{background:#071420;color:#40aad0;border:1px solid #0c2840}
-.c-metric{background:#12071e;color:#b060e8;border:1px solid #241040}
+.c-alert{background:#1e0808;color:#f06060;border:1px solid #401010}
 .c-lbl{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;opacity:.65}
-
 .run-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 .run-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px}
 .run-card-full{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px}
@@ -175,472 +101,487 @@ body{padding-bottom:60px}
 .rest-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px}
 .rest-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:4px}
 .rest-sub{font-size:12px;color:var(--muted);line-height:1.55}
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.metric-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px}
+.metric-card.full{grid-column:1/-1}
+.metric-lbl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.metric-val{font-family:var(--fh);font-size:22px;font-weight:800;line-height:1}
+.metric-note{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
+.metric-ok{color:var(--health)}
+.metric-warn{color:var(--nut)}
+.metric-danger{color:#f06060}
+.status-pill{display:inline-block;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;margin-top:6px}
+.s-ok{background:#081a12;color:var(--health);border:1px solid #103828}
+.s-warn{background:#201408;color:var(--nut);border:1px solid #403010}
+.s-danger{background:#1e0808;color:#f06060;border:1px solid #401010}
+.burnout-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:8px}
+.burnout-title{font-family:var(--fh);font-size:13px;font-weight:700;margin-bottom:12px}
+.burnout-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.burnout-row:last-child{border-bottom:none;padding-bottom:0}
+.burnout-metric{font-size:11px;color:var(--muted)}
+.burnout-right{display:flex;align-items:center;gap:8px}
+.burnout-val{font-family:var(--fh);font-size:13px;font-weight:700}
+.nut-week-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px}
+.nut-week-row:last-child{border-bottom:none}
+.nut-week-date{color:var(--muted);min-width:48px}
+.nut-week-vals{display:flex;gap:16px}
+.nut-ok{color:var(--health)}
+.nut-warn{color:var(--nut)}
+.nut-danger{color:#f06060}
+.timeline{margin-bottom:8px}
+.tl-item{display:flex;gap:12px;position:relative}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:35px;top:28px;bottom:0;width:1px;background:var(--border)}
+.tl-time{min-width:52px;font-size:10px;color:var(--muted);padding-top:8px;text-align:right;flex-shrink:0}
+.tl-dot-wrap{display:flex;flex-direction:column;align-items:center;padding-top:6px;flex-shrink:0}
+.tl-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--border);background:var(--surf2);flex-shrink:0}
+.tl-dot.str{border-color:var(--str);background:#141c08}
+.tl-dot.run{border-color:var(--run);background:#081620}
+.tl-dot.nut{border-color:var(--nut);background:#201408}
+.tl-dot.sleep{border-color:var(--sleep);background:#180a28}
+.tl-dot.walk{border-color:var(--health);background:#081a12}
+.tl-dot.liap{border-color:var(--af);background:#200a14}
+.tl-dot.apple{border-color:var(--muted);background:var(--surf2)}
+.tl-body{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;flex:1}
+.tl-title{font-family:var(--fh);font-size:12px;font-weight:700;margin-bottom:2px}
+.tl-desc{font-size:11px;color:var(--muted);line-height:1.5}
 .pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
 .pill{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);color:var(--muted)}
-.updated{font-size:10px;color:var(--muted);text-align:center;margin-top:20px}
+.macro-row{margin-bottom:14px}
+.macro-hdr{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px}
+.macro-name{color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:10px}
+.macro-track{height:6px;background:var(--surf2);border-radius:3px;overflow:hidden}
+.macro-fill{height:100%;border-radius:3px}
+.fill-pro{background:var(--str)}
+.fill-car{background:var(--run)}
+.fill-fat{background:var(--af)}
+.fill-cal{background:var(--nut)}
 </style>
 </head>
 <body>
 <div class="topbar">
   <div class="safe-top"></div>
-  <div class="top-eyebrow">Week 1 · Apr 13 2026</div>
-  <div class="top-title" id="top-title">Dashboard</div>
-  <div class="top-sub" id="top-sub">Full health overview</div>
+  <div class="top-eyebrow" id="top-eyebrow">Week 1 · Health Plan</div>
+  <div class="top-title" id="top-title">Sunday</div>
+  <div class="top-sub" id="top-sub"></div>
 </div>
-<div class="nav-strip" id="nav-strip"></div>
-<div class="content" id="content"></div>
+
+<div class="content active" id="tab-day">
+  <div class="day-strip" id="day-strip"></div>
+  <div id="day-content" style="padding:20px"></div>
+</div>
+
+<div class="content" id="tab-nutrition">
+  <div style="padding:20px">
+    <span class="s-tag s-tag-nut">Nutrition</span>
+    <div class="s-title">Daily Targets</div>
+    <div class="s-sub">2,275 kcal · 140g protein · 260g carbs · 75g fat</div>
+    <div class="s-timing t-nut">Lose It active · Syncing to Apple Health ✅</div>
+
+    <div class="sec-lbl">This Week — Actual (Apr 13–18)</div>
+    <div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:4px">
+        <span>Date</span>
+        <div style="display:flex;gap:20px"><span>Calories</span><span>Protein</span></div>
+      </div>
+      <div class="nut-week-row"><span class="nut-week-date">Apr 13</span><div class="nut-week-vals"><span class="nut-warn">2,697 kcal</span><span class="nut-ok">134g</span></div></div>
+      <div class="nut-week-row"><span class="nut-week-date">Apr 14</span><div class="nut-week-vals"><span class="nut-danger">3,319 kcal</span><span class="nut-danger">60g</span></div></div>
+      <div class="nut-week-row"><span class="nut-week-date">Apr 15</span><div class="nut-week-vals"><span class="nut-danger">942 kcal</span><span class="nut-danger">81g</span></div></div>
+      <div class="nut-week-row"><span class="nut-week-date">Apr 16</span><div class="nut-week-vals"><span class="nut-danger">1,124 kcal</span><span class="nut-danger">42g</span></div></div>
+      <div class="nut-week-row"><span class="nut-week-date">Apr 17</span><div class="nut-week-vals"><span class="nut-danger">2,870 kcal</span><span class="nut-warn">111g</span></div></div>
+      <div class="nut-week-row"><span class="nut-week-date">Apr 18</span><div class="nut-week-vals"><span class="nut-danger">830 kcal</span><span class="nut-danger">1g</span></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;padding-top:8px;border-top:1px solid var(--border);margin-top:4px">
+        <span style="color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Target</span>
+        <div style="display:flex;gap:20px"><span style="color:var(--nut)">2,275 kcal</span><span style="color:var(--str)">140g</span></div>
+      </div>
+    </div>
+
+    <div class="callout c-alert">
+      <div class="c-lbl">This Week's Pattern</div>
+      Calories swinging 830–3,319. Protein averaging ~71g — half the 140g target. Low days confirmed accurate: caused by low hunger and busy schedule. This week's focus: anchor every meal to your walks so eating becomes automatic.
+    </div>
+
+    <div class="sec-lbl">Daily Macro Targets</div>
+    <div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:8px">
+      <div class="macro-row"><div class="macro-hdr"><span class="macro-name">Protein</span><span>140g · 560 kcal</span></div><div class="macro-track"><div class="macro-fill fill-pro" style="width:100%"></div></div></div>
+      <div class="macro-row"><div class="macro-hdr"><span class="macro-name">Carbohydrates</span><span>260g · 1,040 kcal</span></div><div class="macro-track"><div class="macro-fill fill-car" style="width:100%"></div></div></div>
+      <div class="macro-row"><div class="macro-hdr"><span class="macro-name">Fat</span><span>75g · 675 kcal</span></div><div class="macro-track"><div class="macro-fill fill-fat" style="width:100%"></div></div></div>
+      <div class="macro-row" style="margin-bottom:0"><div class="macro-hdr"><span class="macro-name">Total Calories</span><span>2,275 kcal</span></div><div class="macro-track"><div class="macro-fill fill-cal" style="width:100%"></div></div></div>
+    </div>
+
+    <div class="sec-lbl">Meal Schedule</div>
+    <div class="nut-block"><div class="nut-name">🌅 Breakfast — 7:00am · 600 kcal</div><div class="nut-sub">~40g protein. Anchor to morning walk — eat immediately after. Non-negotiable even when not hungry.<br><br>Options: 3 eggs + 1 cup oats + banana · Greek yogurt bowl + granola + berries · Protein smoothie + oats + PB</div></div>
+    <div class="nut-block"><div class="nut-name">☀️ Lunch — 12:30pm · 650 kcal</div><div class="nut-sub">~40g protein. Set a phone alarm if needed. Do not skip during Apple work hours.<br><br>Options: Chicken + rice + roasted veg · Turkey wrap + avocado + hummus · Salmon + sweet potato</div></div>
+    <div class="nut-block"><div class="nut-name">🌇 Dinner — 5:00pm · 650 kcal</div><div class="nut-sub">~35g protein. Before evening walk. Fuels walk and run on run days.<br><br>Options: Lean beef + veg + rice · Shrimp stir fry · Chicken thighs + quinoa + roasted veg</div></div>
+    <div class="nut-block"><div class="nut-name">🌙 Evening Meal — 8:30pm · 375 kcal</div><div class="nut-sub">~25g protein. Slow-digesting protein supports overnight muscle recovery during 6hr sleep window.<br><br>Options: Cottage cheese + berries · Greek yogurt + almonds · Protein shake + banana</div></div>
+
+    <div class="callout c-tip"><div class="c-lbl">Priority #1</div>Hit 140g protein every day. On low-hunger days: protein shake + banana = 2 minutes, 400 kcal, 25–50g protein. No excuses.</div>
+    <div class="callout c-warn"><div class="c-lbl">Low Day Strategy</div>When not hungry: eat small high-protein anyway. 830 kcal days break down muscle for fuel — this directly works against getting ripped.</div>
+
+    <div class="sec-lbl">Grocery Staples</div>
+    <div class="rest-card"><div class="rest-name">Proteins</div><div class="rest-sub">Chicken breast/thighs, ground beef, salmon, shrimp, eggs, Greek yogurt, cottage cheese, protein powder, turkey</div></div>
+    <div class="rest-card"><div class="rest-name">Carbs</div><div class="rest-sub">Oats, rice, sweet potatoes, quinoa, whole wheat tortillas, bananas, berries, granola</div></div>
+    <div class="rest-card"><div class="rest-name">Fats</div><div class="rest-sub">Avocado, almond butter, peanut butter, almonds, olive oil</div></div>
+    <div class="rest-card"><div class="rest-name">Vegetables</div><div class="rest-sub">Broccoli, asparagus, spinach, bell peppers, zucchini</div></div>
+  </div>
+</div>
+
+<div class="content" id="tab-health">
+  <div style="padding:20px">
+    <span class="s-tag s-tag-health">Health Dashboard</span>
+    <div class="s-title">Weekly Metrics</div>
+    <div class="s-sub">Week of Apr 13–19, 2026</div>
+    <div class="s-timing t-health">Updated Apr 19, 2026 · Check-in every Sunday</div>
+
+    <div class="sec-lbl">Burnout Indicators</div>
+    <div class="burnout-card">
+      <div class="burnout-title">⚡ Early Warning System</div>
+      <div class="burnout-row"><div class="burnout-metric">HRV Average</div><div class="burnout-right"><div class="burnout-val metric-ok">63ms</div><span class="status-pill s-ok">Safe</span></div></div>
+      <div class="burnout-row"><div class="burnout-metric">HRV Low (Apr 14)</div><div class="burnout-right"><div class="burnout-val metric-warn">50ms</div><span class="status-pill s-warn">At Threshold</span></div></div>
+      <div class="burnout-row"><div class="burnout-metric">HRV Today (Apr 19)</div><div class="burnout-right"><div class="burnout-val metric-ok">89ms</div><span class="status-pill s-ok">Best of Week</span></div></div>
+      <div class="burnout-row"><div class="burnout-metric">Resting HR Average</div><div class="burnout-right"><div class="burnout-val metric-ok">57 bpm</div><span class="status-pill s-ok">Safe</span></div></div>
+      <div class="burnout-row"><div class="burnout-metric">Resting HR Spike (Apr 16)</div><div class="burnout-right"><div class="burnout-val metric-danger">74 bpm</div><span class="status-pill s-danger">Breached</span></div></div>
+      <div class="burnout-row"><div class="burnout-metric">VO2 Max</div><div class="burnout-right"><div class="burnout-val metric-ok">43.7</div><span class="status-pill s-ok">Stable</span></div></div>
+      <div class="burnout-row"><div class="burnout-metric">Sleep Fragmentation</div><div class="burnout-right"><div class="burnout-val metric-ok">Mild</div><span class="status-pill s-ok">Safe</span></div></div>
+    </div>
+    <div class="callout c-warn"><div class="c-lbl">Apr 16 HR Spike</div>Resting HR hit 74 bpm — above the 65 bpm burnout threshold. Recovered next day to 53 bpm. Single-day event, not a sustained trend. Investigate cause. Monitor this week.</div>
+
+    <div class="sec-lbl">Cardiovascular</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="metric-lbl">Resting HR</div><div class="metric-val metric-ok">57 bpm</div><div class="metric-note">Weekly avg. Excellent for age 37. Trending down to 52.</div></div>
+      <div class="metric-card"><div class="metric-lbl">HRV Avg</div><div class="metric-val metric-ok">63ms</div><div class="metric-note">Solid recovery. Above 50ms burnout threshold.</div></div>
+      <div class="metric-card"><div class="metric-lbl">VO2 Max</div><div class="metric-val metric-ok">43.7</div><div class="metric-note">mL/min/kg. Good–Excellent for age 37. Stable.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Blood Oxygen</div><div class="metric-val metric-ok">97.3%</div><div class="metric-note">Excellent. Well above 95% threshold.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Resp. Rate</div><div class="metric-val metric-ok">11.8</div><div class="metric-note">Breaths/min. Healthy range 12–20.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Walking Speed</div><div class="metric-val metric-ok">1.15 m/s</div><div class="metric-note">Above average. Consistent gait and balance.</div></div>
+    </div>
+
+    <div class="sec-lbl">Body Composition</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="metric-lbl">Weight</div><div class="metric-val" style="color:var(--muted)">~156 lbs</div><div class="metric-note">Dec 2025. Possibly slightly lighter. No scale currently.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Body Fat</div><div class="metric-val metric-ok">14.8%</div><div class="metric-note">Dec 2025. Goal: reach 10–12%.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Lean Mass</div><div class="metric-val metric-ok">~133 lbs</div><div class="metric-note">60.3kg. Protect with protein + resistance training.</div></div>
+      <div class="metric-card"><div class="metric-lbl">BMR</div><div class="metric-val metric-ok">~1,747</div><div class="metric-note">kcal/day from Apple Health. Matches Mifflin-St Jeor calc.</div></div>
+    </div>
+
+    <div class="sec-lbl">Activity This Week</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="metric-lbl">Avg Steps</div><div class="metric-val metric-ok">10,090</div><div class="metric-note">Apr 18–19 brought avg down. Active days 12–14K.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Active Cal</div><div class="metric-val metric-ok">614</div><div class="metric-note">Avg kcal/day. Strong walking baseline.</div></div>
+      <div class="metric-card full"><div class="metric-lbl">Workouts Logged</div><div class="metric-val" style="color:var(--muted);font-size:16px">Walking only this week</div><div class="metric-note">No resistance training or running logged Apr 13–19. Resistance routine and running begin this week (Week 1 start).</div></div>
+    </div>
+
+    <div class="sec-lbl">Sleep This Week</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="metric-lbl">Bedtime</div><div class="metric-val metric-ok">~9:45pm</div><div class="metric-note">PDT. Consistent and before 10pm as confirmed.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Wake Time</div><div class="metric-val metric-ok">~3:45am</div><div class="metric-note">PDT. Intentional for LIAP deep work block.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Apr 14–15</div><div class="metric-val metric-ok">6h 47m</div><div class="metric-note">Core, REM, Deep all present.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Apr 15–16</div><div class="metric-val metric-ok">7h 50m</div><div class="metric-note">Best night. Minimal fragmentation.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Apr 16–17</div><div class="metric-val metric-ok">7h 31m</div><div class="metric-note">Solid. Good staging quality.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Trend</div><div class="metric-val metric-ok">↑ Better</div><div class="metric-note">Two 7.5hr nights — real improvement. Protect this.</div></div>
+    </div>
+
+    <div class="sec-lbl">Burnout Threshold Reference</div>
+    <div class="rest-card"><div class="rest-name" style="color:#f06060">🚨 Danger — Reduce Load</div><div class="rest-sub">HRV below 50ms for 2+ days · Resting HR above 65 bpm sustained · VO2 Max declining · Sleep under 5.5hrs · Energy noticeably lower</div></div>
+    <div class="rest-card"><div class="rest-name" style="color:var(--nut)">⚠️ Watch — Monitor Closely</div><div class="rest-sub">Single-day HRV dip 50–55ms · Single-day HR spike above 65 · Sleep fragmentation increasing · Energy lower than usual</div></div>
+    <div class="rest-card"><div class="rest-name" style="color:var(--health)">✅ Green — All Clear</div><div class="rest-sub">HRV above 60ms · Resting HR 50–62 bpm · VO2 Max stable or rising · Sleep 6hrs+ good staging · Energy consistent</div></div>
+  </div>
+</div>
+
+<div class="content" id="tab-sleep">
+  <div style="padding:20px">
+    <span class="s-tag s-tag-sleep">Sleep</span>
+    <div class="s-title">Sleep Protocol</div>
+    <div class="s-sub">~6 hours by design · Quality over quantity</div>
+    <div class="s-timing t-sleep">9:45pm → 3:45am PDT · LIAP begins 3:47am</div>
+
+    <div class="sec-lbl">Your Sleep Design</div>
+    <div class="sleep-block"><div class="sleep-name">🌙 Lights Out — 9:45pm PDT</div><div class="sleep-sub">Non-negotiable. Consistent bedtime is the most powerful sleep lever. Recent 7.5hr nights confirm this structure is working.</div></div>
+    <div class="sleep-block"><div class="sleep-name">⚡ Wake — 3:45am PDT</div><div class="sleep-sub">Intentional for LIAP deep work block (3:47am–8am). Deliberate trade-off accepted as part of the dual-career structure. Goal: maximize quality within the window.</div></div>
+    <div class="sleep-block"><div class="sleep-name">🚶 Morning Walk — ~8am PDT</div><div class="sleep-sub">Morning light within 60 minutes of waking anchors your circadian rhythm and improves sleep quality the following night. Your 8am walk is doing this automatically.</div></div>
+
+    <div class="sec-lbl">This Week's Sleep Quality</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="metric-lbl">Apr 14–15</div><div class="metric-val metric-ok">6h 47m</div><div class="metric-note">Core, REM, Deep all present. Good staging.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Apr 15–16</div><div class="metric-val metric-ok">7h 50m</div><div class="metric-note">Best night. Minimal fragmentation.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Apr 16–17</div><div class="metric-val metric-ok">7h 31m</div><div class="metric-note">Solid. All sleep stages present.</div></div>
+      <div class="metric-card"><div class="metric-lbl">Trend</div><div class="metric-val metric-ok">↑ Better</div><div class="metric-note">Two 7.5hr nights is meaningful improvement from prior 6hr pattern.</div></div>
+    </div>
+
+    <div class="sec-lbl">Optimization Protocol</div>
+    <div class="rest-card"><div class="rest-name">No screens 30 min before bed</div><div class="rest-sub">Blue light suppresses melatonin. Enable Night Shift at maximum warmth. Measurably improves deep sleep percentage.</div></div>
+    <div class="rest-card"><div class="rest-name">Room temp 65–68°F</div><div class="rest-sub">Core body temperature dropping is a key sleep trigger. Most people sleep 3–5 degrees too warm.</div></div>
+    <div class="rest-card"><div class="rest-name">Evening meal by 8:30pm</div><div class="rest-sub">Slow-digesting protein at 8:30pm supports overnight muscle repair. Timing is already correct.</div></div>
+    <div class="rest-card"><div class="rest-name">Complete runs by 7:30pm</div><div class="rest-sub">Hard effort close to bedtime raises cortisol and delays sleep onset. Evening walks are fine. Runs finish by 7:30pm.</div></div>
+
+    <div class="callout c-tip"><div class="c-lbl">Sleep and Body Recomposition</div>Growth hormone and muscle repair happen during sleep. The recent 7.5hr nights are directly supporting your recomposition goal — as important as hitting protein targets.</div>
+    <div class="callout c-warn"><div class="c-lbl">Watch — HRV as Sleep Quality Proxy</div>If HRV drops below 50ms consistently, sleep quality is degrading even if duration looks fine. HRV is your real-time sleep quality indicator. Check every Sunday.</div>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <button class="nav-btn active" onclick="switchTab('day')" id="nav-day"><span class="nav-icon">📅</span><span class="nav-label">Plan</span></button>
+  <button class="nav-btn" onclick="switchTab('nutrition')" id="nav-nutrition"><span class="nav-icon">🥗</span><span class="nav-label">Nutrition</span></button>
+  <button class="nav-btn" onclick="switchTab('health')" id="nav-health"><span class="nav-icon">❤️</span><span class="nav-label">Health</span></button>
+  <button class="nav-btn" onclick="switchTab('sleep')" id="nav-sleep"><span class="nav-icon">🌙</span><span class="nav-label">Sleep</span></button>
+</div>
 
 <script>
-const NAV=[
-  {short:'Dash',type:'dash',title:'Dashboard',sub:'Full health overview'},
-  {short:'Mon',type:'str',title:'Full body — Session A',sub:'Strength + Apple Fitness+'},
-  {short:'Tue',type:'run',title:'Run — easy Zone 2',sub:'Evening run'},
-  {short:'Wed',type:'str',title:'Full body — Session B',sub:'Strength + Apple Fitness+'},
-  {short:'Thu',type:'run',title:'Run — easy Zone 2',sub:'Evening run'},
-  {short:'Fri',type:'str',title:'Full body — Session C',sub:'Strength + Apple Fitness+'},
-  {short:'Sat',type:'af',title:'Apple Fitness+ + run',sub:'AF+ morning · run evening'},
-  {short:'Sun',type:'rest',title:'Full rest + recovery',sub:'Walks only'}
-];
+function switchTab(t){
+  ['day','nutrition','health','sleep'].forEach(x=>{
+    document.getElementById('tab-'+x).classList.toggle('active',x===t);
+    document.getElementById('nav-'+x).classList.toggle('active',x===t);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(t==='day')renderTopbar();
+}
 
 const DAYS=[
-{type:'str',timing:'6:00–7:30am · before Apple work',
- pills:['LIAP 3:47–6am','Strength 6–7:30am','Walk ~8am','Apple 8:30am'],
- focus:['VO2 Max','Muscle strength','Body fat','HRV'],
- focusCls:['ft-vo2','ft-str','ft-bf','ft-hrv'],
- focusWhy:'Compound bodyweight movements elevate heart rate contributing to VO2 Max. Resistance training preserves muscle during your caloric deficit, directly improving body composition.',
- sections:[
-  {l:'Warm-up — Apple Fitness+ (8 min)',type:'af',items:[{name:'Yoga or mobility session',sub:'Pick any Yoga or Mobility session. Run 8 minutes. Focus on shoulder circles, chest openers, and hip mobility.'}]},
-  {l:'Block 1 — Push (10 min)',type:'ex',items:[
-   {name:'Incline push-ups',sets:'3 sets × 10 reps',badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
-    metricNote:'Builds pushing strength across chest, shoulders and triceps. Muscle mass raises resting metabolic rate, accelerating fat loss.',
-    how:['Find a wall, counter, or sturdy chair — the higher the surface, the easier.','Place hands shoulder-width apart, arms fully extended.','Walk feet back until your body forms a straight diagonal line from head to heel.','Bend elbows slowly and lower your chest toward the surface (2 counts down).','Push back up to start (1 count up). Core stays tight the entire time.'],
-    tip:'If 10 feels easy, use a lower surface. If hard, raise it.',warn:'Hips must not sag or pike. Straight line head to heel.',prog:'Week 3: move to floor push-ups when you hit 3×10 with clean form.'},
-   {name:'Pike push-ups',sets:'3 sets × 8 reps',badges:[{t:'Muscle strength',c:'eb-str'},{t:'VO2 Max',c:'eb-vo2'}],
-    metricNote:'Shoulder-dominant push. Inverted position elevates heart rate, giving a small cardiovascular benefit on top of strength work.',
-    how:['Start in downward dog — hips high, body forming an inverted V.','Hands slightly wider than shoulder-width, fingers spread.','Bend elbows and lower the top of your head toward the floor between your hands.','Push back up to the inverted V. That is one rep.'],
-    tip:'The higher your hips, the more shoulder load.',warn:'Do not let your hips drop toward the floor.'}
-  ]},
-  {l:'Block 2 — Legs & glutes (12 min)',type:'ex',items:[
-   {name:'Bodyweight squats',sets:'3 sets × 15 reps',badges:[{t:'VO2 Max',c:'eb-vo2'},{t:'Body fat',c:'eb-bf'},{t:'Muscle strength',c:'eb-str'}],
-    metricNote:'Largest muscle groups in the body. High rep squats elevate heart rate significantly — best bodyweight exercise for VO2 Max and calorie burn.',
-    how:['Stand feet shoulder-width apart, toes turned out slightly.','Hold arms straight out in front for balance.','Push hips back and bend knees, lowering until thighs are parallel to the floor.','Drive through heels to stand. Squeeze glutes at the top.'],
-    tip:'Imagine sitting back onto a chair — weight stays in your heels.',warn:'Knees track over toes. Do not let them cave inward.',prog:'Week 3: add a 2-second pause at the bottom.'},
-   {name:'Reverse lunges',sets:'3 sets × 10 reps each leg',badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
-    metricNote:'Single leg training builds balanced strength and burns more calories than bilateral movements. Key driver of lower body definition.',
-    how:['Stand tall, feet together, hands on hips.','Step one foot back 2–3 feet and lower your back knee toward the floor.','Both knees reach roughly 90 degrees at the bottom.','Push through your front heel to return. Alternate legs.'],
-    tip:'Reverse lunges are gentler on the knees than forward lunges.',warn:'Keep chest upright. Do not let your front knee shoot past your toes.'}
-  ]},
-  {l:'Block 3 — Core (8 min)',type:'ex',items:[
-   {name:'Dead bug',sets:'3 sets × 10 reps each side',badges:[{t:'HRV',c:'eb-hrv'},{t:'Muscle strength',c:'eb-str'}],
-    metricNote:'Deep core stability reduces injury risk and improves movement efficiency. Lower injury risk supports training consistency which keeps HRV stable.',
-    how:['Lie on your back, arms pointing straight up.','Bend knees to 90 degrees, shins parallel to the floor.','Press your lower back firmly into the floor — hold it there.','Slowly lower right arm overhead and left leg toward the floor simultaneously.','Stop before they touch, bring both back. Switch sides. That is one rep each side.'],
-    tip:'If your lower back lifts, you went too far.',warn:'Slow and controlled. Speed defeats the purpose.'},
-   {name:'Plank',sets:'3 sets × 20 seconds',badges:[{t:'HRV',c:'eb-hrv'},{t:'Muscle strength',c:'eb-str'}],
-    metricNote:'Isometric core tension improves posture and spinal stability. Low nervous system demand — good for HRV recovery days.',
-    how:['Get into push-up position but rest on forearms.','Elbows directly under shoulders, forearms flat on the floor.','Body is a straight line from head to heels — no sagging hips.','Breathe normally and hold.'],
-    tip:'Squeeze glutes and quads — makes the hold much easier.',warn:'The moment your hips sag, stop and rest.',prog:'Add 5 seconds each week once the current hold feels easy.'}
-  ]},
-  {l:'Cooldown — Apple Fitness+ (5–8 min)',type:'af',items:[{name:'Cooldown stretch session',sub:'Pick any Cooldown or Stretching session. Focus on chest, shoulders, and hip flexors.'}]}
- ]},
+{short:'Mon',type:'str',title:'Push Day',sub:'Yoga → Push-ups + Tricep Dips → Apple Fitness+',timing:'6:00–6:45am · before morning walk',
+pills:['LIAP 3:47–6am','Push 6–6:45am','Breakfast 7am','Walk ~8am','Apple 8:30am','Lunch 12:30pm','Dinner 5pm','Walk 6–7pm','Meal 8:30pm','Bed 9:45pm'],
+schedule:[
+{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work. Protected time.'},
+{time:'6:00am',dot:'str',title:'Push Workout',desc:'Yoga 10min → Push-ups 3×25 → Tricep dips 3×25 → Apple Fitness+ 5min'},
+{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein. Anchor to walk. Non-negotiable.'},
+{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min. Morning light for circadian rhythm.'},
+{time:'8:30am',dot:'apple',title:'Apple Work',desc:'Day job.'},
+{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein. Set alarm if needed.'},
+{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein. Before walk.'},
+{time:'6:00pm',dot:'walk',title:'Evening Walk',desc:'~30 min easy.'},
+{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein. Slow protein before bed.'},
+{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Non-negotiable.'}
+],
+sections:[
+{l:'Warm-up — Yoga (10 min)',type:'af',items:[{name:'Apple Fitness+ — Yoga or Mobility',sub:'10 min. Focus on shoulder circles, chest openers, and hip mobility.'}]},
+{l:'Push Block — 20 min',type:'ex',items:[
+{name:'Push-ups',sets:'3 sets × 25 reps — building to 75',
+how:['Hands shoulder-width, body straight head to heel.','Lower chest to floor (2 counts), push back up (1 count).','Core tight. No sagging hips.','60–90 sec rest between sets.'],
+tip:'Week 1: 25 reps clean form. Add 5–10 reps/week until reaching 75.',
+warn:'Stop if form breaks. Quality over grinding.',
+prog:'Week 3: 50 reps. Week 5: full 75.'},
+{name:'Tricep dips',sets:'3 sets × 25 reps — building to 75',
+how:['Sit on floor, knees bent, hands behind hips fingers forward.','Press into hands to lift hips.','Bend elbows, lower hips toward floor — do not touch.','Press back up.'],
+tip:'Elevate hands on a chair for more intensity.',
+warn:'Elbows point straight back — not flaring out.',
+prog:'Week 3: hands elevated. Week 5: full 75.'}
+]},
+{l:'Cooldown — Apple Fitness+ (5 min)',type:'af',items:[{name:'Apple Fitness+ — Cooldown or Stretching',sub:'Focus on chest, shoulders, and triceps.'}]}
+]},
 
-{type:'run',timing:'6:00–6:45pm · after Apple work',
- pills:['LIAP 3:47–6am','Apple 8:30am–5:30pm','Run 6–6:45pm'],
- focus:['VO2 Max','Resting HR','Body fat'],focusCls:['ft-vo2','ft-hr','ft-bf'],
- focusWhy:'Zone 2 running is the single most effective method for improving VO2 Max and lowering resting HR. At easy pace your body burns primarily fat — directly targeting body fat %.',
- sections:[
-  {l:'Your Week 1 run',type:'run',items:[
-   {lbl:'Distance',val:'1.0 mi',note:'About 10–12 minutes of jogging at easy pace.'},
-   {lbl:'Pace',val:'Zone 2',note:'Hold a full conversation the entire time. If you cannot speak in sentences, slow down.'},
-   {lbl:'Structure',val:'Run/walk OK',note:'3 min jog / 1 min walk is completely fine in week 1.'}
-  ]},
-  {l:'Zone 2 explained',type:'ex',items:[
-   {name:'Zone 2 running',sets:'The whole run',badges:[{t:'VO2 Max',c:'eb-vo2'},{t:'Resting HR',c:'eb-hr'},{t:'Body fat',c:'eb-bf'}],
-    metricNote:'Zone 2 is the primary driver of VO2 Max improvement. Consistent Zone 2 work lowers resting HR over 8–12 weeks. At this intensity your body oxidizes fat as primary fuel.',
-    how:['Zone 2 is aerobic — body burns fat, heart works but is not racing.','Target: speak in full sentences but would not want to sing.','Apple Watch: heart rate 60–70% of max, roughly 125–145 bpm.','If above 145 bpm, slow down or walk for 30 seconds.','At the end you should feel like you could have kept going.'],
-    tip:'Most beginners run too fast. Zone 2 feels embarrassingly slow. That is correct.',warn:'Do not skip easy pace in week 1. Too hard too soon causes burnout.'}
-  ]},
-  {l:'Post-run stretch (5 min)',type:'ex',items:[
-   {name:'Standing quad stretch',sets:'30 sec each leg',badges:[{t:'HRV',c:'eb-hrv'}],metricNote:'Post-run stretching reduces muscular tension and supports parasympathetic recovery — directly improves HRV.',
-    how:['Stand on one leg, bend other knee, hold ankle behind you.','Keep knees together. Stand tall. 30 seconds each side.'],tip:'Hold a wall if balance is tricky.',warn:''},
-   {name:'Calf stretch against wall',sets:'30 sec each leg',badges:[{t:'HRV',c:'eb-hrv'}],metricNote:'Calf tightness restricts blood flow. Stretching supports faster recovery and better overnight HRV.',
-    how:['Face a wall, step one foot back, keep heel flat.','Lean into wall with straight back leg until you feel the calf stretch.','30 seconds each side.'],tip:'Flex your foot (toes toward you) to deepen the stretch.',warn:''}
-  ]}
- ]},
+{short:'Tue',type:'run',title:'Zone 2 Run',sub:'Evening run after Apple work',timing:'Run 6:00–6:45pm',
+pills:['LIAP 3:47–6am','Breakfast 7am','Walk ~8am','Apple 8:30am','Lunch 12:30pm','Dinner 5pm','Run 6–6:45pm','Cool-down walk','Meal 8:30pm','Bed 9:45pm'],
+schedule:[
+{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work.'},
+{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein.'},
+{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min.'},
+{time:'8:30am',dot:'apple',title:'Apple Work',desc:'Day job.'},
+{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
+{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein. Eat before run.'},
+{time:'6:00pm',dot:'run',title:'Zone 2 Run — 1.0 mile',desc:'Conversational pace. HR 125–145 bpm.'},
+{time:'6:45pm',dot:'walk',title:'Cool-down Walk',desc:'10–15 min easy.'},
+{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein.'},
+{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Run done before 7:30pm to protect sleep.'}
+],
+sections:[
+{l:'Week 1 Run',type:'run',items:[
+{lbl:'Distance',val:'1.0 mi',note:'~10–12 min of easy jogging.'},
+{lbl:'Pace',val:'Zone 2',note:'Full conversation the whole time. Cannot speak in sentences = slow down or walk.'},
+{lbl:'Run/walk OK',val:'3:1',note:'3 min jog / 1 min walk repeated is fine. Builds aerobic base safely.'}
+]},
+{l:'Post-run stretch (5 min)',type:'ex',items:[
+{name:'Standing quad stretch',sets:'30 sec each leg',how:['Stand on one leg, bend other knee, hold ankle behind you.','Keep knees together. Hold 30 sec each side.'],tip:'Hold a wall if balance is tricky.'},
+{name:'Calf stretch against wall',sets:'30 sec each leg',how:['Face wall. Step one foot back, heel flat on ground.','Lean gently into wall with back leg straight.'],tip:'Flex foot (toes toward you) to deepen stretch.'}
+]}
+]},
 
-{type:'str',timing:'6:00–7:30am · before Apple work',
- pills:['LIAP 3:47–6am','Strength 6–7:30am','Walk ~8am','Apple 8:30am'],
- focus:['Muscle strength','Body fat','HRV','VO2 Max'],focusCls:['ft-str','ft-bf','ft-hrv','ft-vo2'],
- focusWhy:'Session B rotates to pulling and squatting patterns for full body balance. Balanced strength development protects joints and reduces injury risk — keeping HRV stable.',
- sections:[
-  {l:'Warm-up — Apple Fitness+ (8 min)',type:'af',items:[{name:'HIIT warm-up or Pilates',sub:'Choose HIIT or Pilates. Activates glutes, opens hips, warms up the back.'}]},
-  {l:'Block 1 — Pull (10 min)',type:'ex',items:[
-   {name:'Table rows',sets:'3 sets × 10 reps',badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
-    metricNote:'Back and bicep pulling strength. Balances Monday pushing. Muscle balance reduces injury risk and supports training longevity.',
-    how:['Find a sturdy table. Lie on your back underneath it.','Grip the edge underhand, shoulder-width apart.','Body hangs straight — heels on floor, like a plank.','Pull your chest up toward the table, squeezing shoulder blades together.','Lower slowly back down. That is one rep.'],
-    tip:'More horizontal body = harder. Start with a slight angle.',warn:'Do not shrug shoulders up. Keep them pulled back and down.',prog:'Week 5: elevate feet on a chair.'},
-   {name:'Superman hold',sets:'3 sets × 12 reps (2 sec hold)',badges:[{t:'Muscle strength',c:'eb-str'},{t:'HRV',c:'eb-hrv'}],
-    metricNote:'Posterior chain activation — lower back, glutes, rear shoulders. Strong posterior chain reduces chronic tension and improves sleep quality, which improves HRV.',
-    how:['Lie face down, arms stretched overhead, legs straight.','Simultaneously lift arms, chest, and legs off the floor.','Hold 2 seconds at the top. Lower back down. One rep.'],
-    tip:'Reach fingertips as far forward as possible as you lift.',warn:'Do not look up. Eyes toward the floor — neck stays neutral.'}
-  ]},
-  {l:'Block 2 — Legs (12 min)',type:'ex',items:[
-   {name:'Sumo squats',sets:'3 sets × 15 reps',badges:[{t:'VO2 Max',c:'eb-vo2'},{t:'Body fat',c:'eb-bf'},{t:'Muscle strength',c:'eb-str'}],
-    metricNote:'Wide stance targets inner thighs and glutes differently. High-rep leg work significantly elevates heart rate — excellent for VO2 Max and calorie burn.',
-    how:['Stand feet wider than shoulder-width, toes out 45 degrees.','Hold arms in front or clasp hands at chest.','Sit straight down between legs, keeping chest tall.','Drive back up through heels, squeeze glutes at top.'],
-    tip:'Targets inner thighs and glutes more than standard squat.',warn:'Knees track in the direction your toes point.'},
-   {name:'Glute bridges',sets:'3 sets × 15 reps',badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
-    metricNote:'Glutes are the largest muscle in the body. Strong glutes improve running economy, which elevates VO2 Max and makes runs feel easier.',
-    how:['Lie on back, knees bent, feet flat hip-width apart.','Arms at sides, palms down.','Drive through heels, squeeze glutes, lift hips toward ceiling.','Body forms straight line knees to shoulders at top.','Hold 1 second. Lower slowly. One rep.'],
-    tip:'The squeeze at the top builds the glutes. Do not skip it.',warn:'Do not hyperextend lower back. Stop when hips align with torso.',prog:'Week 5: single-leg glute bridges.'}
-  ]},
-  {l:'Block 3 — Core (8 min)',type:'ex',items:[
-   {name:'Bicycle crunches',sets:'3 sets × 12 reps each side',badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
-    metricNote:'Rotational core targets obliques — the muscles responsible for the defined V-shape as body fat decreases. Core strength also improves running form.',
-    how:['Lie on back, hands lightly behind head — do not pull neck.','Lift feet off ground, knees bent 90 degrees.','Bring right elbow toward left knee while extending right leg.','Switch sides in slow controlled motion. One rep each side.'],
-    tip:'Slow is better. One controlled rep beats five sloppy ones.',warn:'Rotation from torso, not from yanking your neck forward.'},
-   {name:'Side plank',sets:'3 sets × 20 seconds each side',badges:[{t:'HRV',c:'eb-hrv'},{t:'Muscle strength',c:'eb-str'}],
-    metricNote:'Lateral core stability protects the spine during running. Low nervous system demand — good HRV management.',
-    how:['Lie on side, prop on forearm. Elbow under shoulder.','Stack feet or stagger for more stability.','Lift hips so body forms straight line head to feet.','Hold. Breathe. Switch sides after each set.'],
-    tip:'Top hand on hip helps balance.',warn:'Hips must not sag toward the floor.',prog:'Add 5 seconds per week when comfortable.'}
-  ]},
-  {l:'Cooldown — Apple Fitness+ (5–8 min)',type:'af',items:[{name:'Cooldown stretch',sub:'Cooldown or Yoga session. Focus on lower back, hamstrings, and hip flexors.'}]}
- ]},
+{short:'Wed',type:'str',title:'Pull + Core Day',sub:'Yoga → Rows + 300 Crunches → Apple Fitness+',timing:'6:00–6:45am · before morning walk',
+pills:['LIAP 3:47–6am','Pull+Core 6–6:45am','Breakfast 7am','Walk ~8am','Apple 8:30am','Lunch 12:30pm','Dinner 5pm','Walk 6–7pm','Meal 8:30pm','Bed 9:45pm'],
+schedule:[
+{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work.'},
+{time:'6:00am',dot:'str',title:'Pull + Core Workout',desc:'Yoga 10min → Rows 3×25 → Crunches 4×75 (300 total) → Apple Fitness+ 5min'},
+{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein.'},
+{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min.'},
+{time:'8:30am',dot:'apple',title:'Apple Work',desc:'Day job.'},
+{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
+{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein.'},
+{time:'6:00pm',dot:'walk',title:'Evening Walk',desc:'~30 min.'},
+{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein.'},
+{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Non-negotiable.'}
+],
+sections:[
+{l:'Warm-up — Yoga (10 min)',type:'af',items:[{name:'Apple Fitness+ — Yoga or Pilates',sub:'10 min. Focus on back activation, hip opening, and posterior chain warm-up.'}]},
+{l:'Pull Block — 15 min',type:'ex',items:[
+{name:'Table rows',sets:'3 sets × 25 reps — building to 75',
+how:['Find a sturdy table. Lie underneath it on your back.','Grip edge, palms facing you, shoulder-width apart.','Body straight — heels on floor like a plank.','Pull chest up to table edge, squeezing shoulder blades at top.','Lower slowly. One rep.'],
+tip:'More horizontal = harder. Start with slight angle.',
+warn:'Do not shrug shoulders. Keep them pulled back and down.',
+prog:'Week 5: elevate feet on chair.'}
+]},
+{l:'Core Block — 15 min (300 reps total)',type:'ex',items:[
+{name:'Crunches — Standard',sets:'75 reps',how:['Lie on back, knees bent, feet flat.','Hands lightly behind head — do not pull neck.','Curl upper body toward knees using abs. Lower slowly.'],tip:'Focus on contraction at the top.',warn:'Movement from abs, not neck.'},
+{name:'Crunches — Bicycle',sets:'75 reps',how:['Lie on back, hands behind head, feet off ground at 90 degrees.','Right elbow to left knee while extending right leg.','Switch sides in slow controlled motion.'],tip:'Slow is better. Rotation from torso.',warn:'Lower back pressed to floor throughout.'},
+{name:'Crunches — Reverse',sets:'75 reps',how:['Lie on back, arms at sides palms down.','Knees bent 90 degrees.','Use lower abs to curl hips off floor, knees toward chest.','Lower without feet touching.'],tip:'Small controlled movement — not swinging.',warn:'If lower back takes over, reduce range.'},
+{name:'Crunches — Cross-body',sets:'75 reps',how:['Lie on back, one leg extended, opposite knee bent.','Opposite elbow toward bent knee.','Switch sides each rep. Slow and controlled.'],tip:'Rotate shoulder toward opposite hip, not just moving elbow.'}
+]},
+{l:'Cooldown — Apple Fitness+ (5 min)',type:'af',items:[{name:'Apple Fitness+ — Cooldown or Yoga',sub:'Focus on lower back, hip flexors, and hamstrings.'}]}
+]},
 
-{type:'run',timing:'6:00–6:45pm · after Apple work',
- pills:['LIAP 3:47–6am','Apple 8:30am–5:30pm','Run 6–6:45pm'],
- focus:['VO2 Max','Resting HR','Body fat'],focusCls:['ft-vo2','ft-hr','ft-bf'],
- focusWhy:'Second Zone 2 run of the week. Two easy runs builds aerobic base faster than one hard run. The cumulative effect on VO2 Max and resting HR compounds over weeks.',
- sections:[
-  {l:'Your Week 1 run',type:'run',items:[
-   {lbl:'Distance',val:'1.0 mi',note:'Same as Tuesday. Identical easy effort.'},
-   {lbl:'Pace',val:'Zone 2',note:'Conversational the whole time. Heart rate under ~145 bpm.'},
-   {lbl:'Mindset',val:'Easy & consistent',note:'Trust the process. Two easy runs per week beats one hard run every time.'}
-  ]},
-  {l:'Post-run stretch (5 min)',type:'ex',items:[
-   {name:'Hip flexor stretch — kneeling lunge',sets:'30 sec each side',badges:[{t:'HRV',c:'eb-hrv'}],metricNote:'Hip flexors tighten from running and desk sitting. Chronic tightness increases injury risk. Flexibility supports recovery and HRV.',
-    how:['Kneel on one knee, other foot forward in lunge.','Shift hips forward until you feel stretch at front of back hip.','Keep torso upright. 30 seconds each side.'],tip:'Undoes hip flexor tightness from running and sitting.',warn:''},
-   {name:'Seated hamstring stretch',sets:'30 sec each leg',badges:[{t:'HRV',c:'eb-hrv'}],metricNote:'Loose hamstrings improve running stride length and efficiency — better economy means improved VO2 Max over time.',
-    how:['Sit on floor, one leg extended, other foot tucked in.','Reach toward extended foot — or as far as comfortable.','30 seconds each side.'],tip:'Flex your foot (toes toward you) to increase the stretch.',warn:''}
-  ]}
- ]},
+{short:'Thu',type:'run',title:'Zone 2 Run',sub:'Evening run after Apple work',timing:'Run 6:00–6:45pm',
+pills:['LIAP 3:47–6am','Breakfast 7am','Walk ~8am','Apple 8:30am','Lunch 12:30pm','Dinner 5pm','Run 6–6:45pm','Cool-down walk','Meal 8:30pm','Bed 9:45pm'],
+schedule:[
+{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work.'},
+{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein.'},
+{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min.'},
+{time:'8:30am',dot:'apple',title:'Apple Work',desc:'Day job.'},
+{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
+{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein. Eat before run.'},
+{time:'6:00pm',dot:'run',title:'Zone 2 Run — 1.0 mile',desc:'Same easy effort as Tuesday. Not a race against yourself.'},
+{time:'6:45pm',dot:'walk',title:'Cool-down Walk',desc:'10–15 min easy.'},
+{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein.'},
+{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Non-negotiable.'}
+],
+sections:[
+{l:'Week 1 Run',type:'run',items:[
+{lbl:'Distance',val:'1.0 mi',note:'Same as Tuesday. Identical easy effort.'},
+{lbl:'Pace',val:'Zone 2',note:'Conversational the whole time. HR under ~145 bpm.'},
+{lbl:'Mindset',val:'Easy',note:'Two easy runs per week builds aerobic base faster than one hard run.'}
+]},
+{l:'Post-run stretch (5 min)',type:'ex',items:[
+{name:'Hip flexor stretch — kneeling lunge',sets:'30 sec each side',how:['Kneel on one knee, other foot forward.','Shift hips forward until you feel stretch at front of back hip.','Keep torso upright.'],tip:'Undoes hip flexor tightness from running and desk sitting.'},
+{name:'Seated hamstring stretch',sets:'30 sec each leg',how:['Sit on floor, one leg extended, other foot tucked in.','Reach toward extended foot.'],tip:'Flex foot (toes toward you) to increase stretch.'}
+]}
+]},
 
-{type:'str',timing:'6:00–7:30am · before Apple work',
- pills:['LIAP 3:47–6am','Strength 6–7:30am','Walk ~8am','Apple 8:30am'],
- focus:['Muscle strength','Body fat','VO2 Max','HRV'],focusCls:['ft-str','ft-bf','ft-vo2','ft-hrv'],
- focusWhy:'Session C introduces posterior chain emphasis — muscles along the back of the body. Critical for posture, running performance, and the lean physique you are building.',
- sections:[
-  {l:'Warm-up — Apple Fitness+ (8 min)',type:'af',items:[{name:'Dance Fitness or Kickboxing warm-up',sub:'Pick something fun. Gets heart rate up and loosens everything. First 8 minutes.'}]},
-  {l:'Block 1 — Push variation (10 min)',type:'ex',items:[
-   {name:'Wide-grip push-ups',sets:'3 sets × 8 reps',badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
-    metricNote:'Wider placement shifts emphasis to outer chest. Chest width and thickness becomes visible as body fat drops toward your target.',
-    how:['Push-up position. Hands wider than shoulder-width — about 1.5x.','Lower chest toward floor with elbows flaring slightly outward.','Push back up. Targets outer chest more than standard push-ups.'],
-    tip:'If floor is too hard, use a low counter or bench.',warn:'Core tight — hips do not sag or pike.'},
-   {name:'Tricep dips (floor)',sets:'3 sets × 10 reps',badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
-    metricNote:'Triceps make up two thirds of upper arm size. Direct tricep training creates arm definition visible as body fat decreases.',
-    how:['Sit on floor, knees bent, feet flat. Hands behind hips, fingers forward.','Press into hands to lift hips off floor.','Bend elbows and lower hips toward floor — do not touch.','Press back up. One rep.'],
-    tip:'Elevate hands on a chair for more intensity.',warn:'Elbows pointing straight back — not flaring out to sides.'}
-  ]},
-  {l:'Block 2 — Posterior chain (12 min)',type:'ex',items:[
-   {name:'Good mornings (bodyweight)',sets:'3 sets × 12 reps',badges:[{t:'Muscle strength',c:'eb-str'},{t:'VO2 Max',c:'eb-vo2'}],
-    metricNote:'Hip hinge strengthens hamstrings and lower back. Strong posterior chain improves running economy — body moves more efficiently, raising VO2 Max.',
-    how:['Stand feet hip-width, slight bend in knees.','Hands behind head or arms crossed at chest.','Hinge at hips — push back while chest lowers toward floor.','Keep back flat. Lower until you feel hamstring stretch.','Drive hips forward to stand. Squeeze glutes at top.'],
-    tip:'Think door hinge — movement entirely from hips, not lower back.',warn:'Do not round your back. If it curves, you went too far.'},
-   {name:'Wall sit',sets:'3 sets × 30 seconds',badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
-    metricNote:'Isometric quad hold builds quad endurance. The sustained tension burns significant calories for a static movement.',
-    how:['Back flat against wall.','Slide down until thighs parallel to floor — invisible chair.','Feet flat, knees at 90 degrees, back against wall.','Hold and breathe.'],
-    tip:'Arms rest on thighs or extend out front.',warn:'Knees above ankles — do not drift forward.',prog:'Add 10 seconds each week.'},
-   {name:'Step-ups',sets:'3 sets × 10 reps each leg',badges:[{t:'VO2 Max',c:'eb-vo2'},{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
-    metricNote:'Single leg elevation raises heart rate considerably. Mimics running mechanics — training this directly improves running efficiency and VO2 Max.',
-    how:['Find sturdy chair, stair, or low box.','Step up with right foot, press through heel to bring left foot up.','Step back down right foot first.','Complete all reps one leg, then switch.'],
-    tip:'Use lower surface if balance is tricky.',warn:'Drive through heel of working leg. Do not push off back foot.'}
-  ]},
-  {l:'Block 3 — Core (8 min)',type:'ex',items:[
-   {name:'Reverse crunches',sets:'3 sets × 12 reps',badges:[{t:'Muscle strength',c:'eb-str'},{t:'Body fat',c:'eb-bf'}],
-    metricNote:'Lower ab focus. The lower abdomen is often last to show definition — direct training here combined with your caloric deficit accelerates results.',
-    how:['Lie on back, arms flat at sides, palms pressing floor.','Knees bent 90 degrees, shins parallel to floor.','Use lower abs to curl hips off floor, knees toward chest.','Lower hips slowly without letting feet touch. One rep.'],
-    tip:'Small controlled movement — not a big swing.',warn:'If lower back takes over, slow down and reduce range.'},
-   {name:'Plank shoulder taps',sets:'3 sets × 10 taps each side',badges:[{t:'HRV',c:'eb-hrv'},{t:'Muscle strength',c:'eb-str'}],
-    metricNote:'Anti-rotation core stability. Training the core to resist movement builds functional strength that carries over to running and daily life.',
-    how:['High push-up position — arms extended, hands under shoulders.','Keep hips as still as possible while lifting one hand to tap opposite shoulder.','Place hand back, then tap with other. One rep each side.'],
-    tip:'Wider feet make this easier to balance.',warn:'Do not let hips rock side to side.'}
-  ]},
-  {l:'Cooldown — Apple Fitness+ (5–8 min)',type:'af',items:[{name:'Cooldown stretch',sub:'Cooldown or Stretching in Apple Fitness+. Quads, glutes, and lower back.'}]}
- ]},
+{short:'Fri',type:'str',title:'Legs Day',sub:'Yoga → Squats + Lunges + Glute Bridges → Apple Fitness+',timing:'6:00–6:45am · before morning walk',
+pills:['LIAP 3:47–6am','Legs 6–6:45am','Breakfast 7am','Walk ~8am','Apple 8:30am','Lunch 12:30pm','Dinner 5pm','Walk 6–7pm','Meal 8:30pm','Bed 9:45pm'],
+schedule:[
+{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work.'},
+{time:'6:00am',dot:'str',title:'Legs Workout',desc:'Yoga 10min → Squats 3×25 → Lunges 3×25 → Glute bridges 3×25 → Apple Fitness+ 5min'},
+{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein.'},
+{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min.'},
+{time:'8:30am',dot:'apple',title:'Apple Work',desc:'Day job.'},
+{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
+{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein.'},
+{time:'6:00pm',dot:'walk',title:'Evening Walk',desc:'~30 min. Legs are worked — easy pace.'},
+{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein.'},
+{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'One recovery night before Saturday run.'}
+],
+sections:[
+{l:'Warm-up — Yoga (10 min)',type:'af',items:[{name:'Apple Fitness+ — Yoga or Mobility',sub:'10 min. Focus on hip openers, quad stretches, and glute activation.'}]},
+{l:'Legs Block — 25 min',type:'ex',items:[
+{name:'Bodyweight squats',sets:'3 sets × 25 reps — building to 75',
+how:['Feet shoulder-width, toes out slightly.','Arms out front for balance.','Push hips back, lower until thighs parallel or as deep as comfortable.','Drive through heels. Squeeze glutes at top.'],
+tip:'Weight stays in heels — imagine sitting back onto a chair.',
+warn:'Knees track over toes. Do not let them cave inward.',
+prog:'Week 5: 2-second pause at bottom of each rep.'},
+{name:'Reverse lunges',sets:'3 sets × 25 reps each leg — building to 75',
+how:['Stand tall, feet together, hands on hips.','Step one foot back 2–3 feet, lower back knee toward floor.','Both knees ~90 degrees at bottom.','Push through front heel to return.'],
+tip:'Gentler on knees than forward lunges — great for building back in.',
+warn:'Chest upright. Front knee does not go past toes.',
+prog:'Week 5: resistance band above knees.'},
+{name:'Glute bridges',sets:'3 sets × 25 reps — building to 75',
+how:['Lie on back, knees bent, feet flat hip-width apart.','Arms at sides, palms down.','Drive through heels, squeeze glutes, lift hips toward ceiling.','Straight line from knees to shoulders at top. Hold 1 sec. Lower slowly.'],
+tip:'The squeeze at the top builds the glutes. Do not skip it.',
+warn:'Do not hyperextend lower back. Stop when hips align with torso.',
+prog:'Week 5: single-leg glute bridges.'}
+]},
+{l:'Cooldown — Apple Fitness+ (5 min)',type:'af',items:[{name:'Apple Fitness+ — Cooldown or Stretching',sub:'Focus on quads, glutes, hamstrings, hip flexors. Legs need most attention today.'}]}
+]},
 
-{type:'af',timing:'AF+ 8–9am · Run 6–7pm',
- pills:['AF+ morning 8–9am','Walk optional','Run evening 6–7pm'],
- focus:['VO2 Max','Body fat','Resting HR','HRV'],focusCls:['ft-vo2','ft-bf','ft-hr','ft-hrv'],
- focusWhy:'Saturday is your highest training volume day. Full AF+ session plus a run creates a powerful stimulus for both VO2 Max improvement and fat oxidation.',
- sections:[
-  {l:'Morning — Apple Fitness+ (30–35 min)',type:'af',items:[
-   {name:'HIIT, Dance Fitness, or Kickboxing',sub:'AF+ runs the full workout today. HIIT for max output, Dance Fitness for fun, Kickboxing to hit things. All valid.'},
-   {name:'How to choose',sub:'High energy → HIIT or Kickboxing. Moderate → Dance Fitness. Lower → Pilates or Yoga. There is a run later.'}
-  ]},
-  {l:'Evening run — 1.0 mile',type:'run',items:[
-   {lbl:'Distance',val:'1.0 mi',note:'Third run of the week. Same Zone 2 easy effort.'},
-   {lbl:'Timing',val:'~6–7pm',note:'If legs feel very heavy after morning AF+, shorten to 0.75 mi — no problem.'},
-   {lbl:'From week 7',val:'Longest run day',note:'Saturday gradually becomes your longest run once base builds.'}
-  ]},
-  {l:'Post-run stretch (5–8 min)',type:'ex',items:[
-   {name:'Full body stretch sequence',sets:'5–8 minutes total',badges:[{t:'HRV',c:'eb-hrv'}],
-    metricNote:'Saturday carries the most training load. A thorough stretch here supports overnight recovery — shows up as better HRV on Sunday morning.',
-    how:['Calves: step one foot back, heel flat, lean into wall. 30 sec each.','Quads: stand on one foot, pull ankle to glute. 30 sec each.','Hip flexors: kneeling lunge, shift hips forward. 30 sec each.','Glutes: lie on back, cross ankle over knee, pull both legs toward chest. 30 sec each.'],
-    tip:'Saturday is highest load day — take the stretch seriously.',warn:''}
-  ]}
- ]},
+{short:'Sat',type:'mix',title:'Full Body + Run',sub:'Lighter strength · Evening Zone 2 run',timing:'Strength 6–6:45am · Run 6–7pm',
+pills:['LIAP 3:47–6am','Full Body 6–6:45am','Breakfast 7am','Walk ~8am','Lunch 12:30pm','Dinner 5pm','Run 6–7pm','Meal 8:30pm','Bed 9:45pm'],
+schedule:[
+{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work.'},
+{time:'6:00am',dot:'str',title:'Full Body Light',desc:'Yoga 10min → 40 push-ups + 40 rows + 40 squats + 150 crunches → Apple Fitness+ 5–10min'},
+{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein. Highest load day — fuel properly.'},
+{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min.'},
+{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
+{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein. Eat before run.'},
+{time:'6:00pm',dot:'run',title:'Zone 2 Run — 1.0 mile',desc:'Third run of week. Shorten to 0.75 mi if legs feel heavy.'},
+{time:'6:50pm',dot:'walk',title:'Cool-down + Full Stretch',desc:'8 min full body stretch. Saturday needs most cooldown.'},
+{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein. Highest load day — protein critical.'},
+{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Biggest training day. Protect the sleep.'}
+],
+sections:[
+{l:'Morning — Full Body Light (40–45 min)',type:'ex',items:[
+{name:'Push-ups',sets:'40 reps',how:['Floor push-ups. Controlled pace.','Maintenance volume — not max effort today.'],tip:'Save energy for the evening run.',warn:'Reduce to 30 if still sore from Monday.'},
+{name:'Table rows',sets:'40 reps',how:['Same form as Wednesday. Controlled pull, squeeze at top.'],tip:'Smooth and controlled.'},
+{name:'Bodyweight squats',sets:'40 reps',how:['Same form as Friday. Full depth, drive through heels.'],tip:'Reduce to 30 if legs fatigued from Friday.'},
+{name:'Crunches — 2 variations',sets:'75 standard + 75 bicycle = 150 total',how:['Standard: 75 reps.','Bicycle: 75 reps.'],tip:'Core gets full effort even on the lighter day.'}
+]},
+{l:'Evening — Week 1 Run',type:'run',items:[
+{lbl:'Distance',val:'1.0 mi',note:'Third run. Same Zone 2 easy effort.'},
+{lbl:'If heavy legs',val:'0.75 mi OK',note:'Morning session + run is highest load. Shorten if needed.'},
+{lbl:'From Week 7',val:'Longest day',note:'Saturday gradually becomes your longest run as base builds.'}
+]},
+{l:'Post-run stretch (8 min)',type:'ex',items:[
+{name:'Full body stretch — do not skip',sets:'8 minutes total',
+how:['Calves: step one foot back, heel flat, lean into wall. 30 sec each side.','Quads: stand on one foot, pull ankle to glute. 30 sec each side.','Hip flexors: kneeling lunge, shift hips forward. 30 sec each side.','Glutes: lie on back, cross ankle over knee, pull both legs toward chest. 30 sec each side.','Hamstrings: seated reach toward extended foot. 30 sec each side.'],
+tip:'Saturday is highest load day. This stretch is part of the session — not optional.'}
+]}
+]},
 
-{type:'rest',timing:'Rest day · let the week absorb',
- pills:['Walk ~8am','Walk ~6–7pm','No strength','No run'],
- focus:['HRV','Resting HR'],focusCls:['ft-hrv','ft-hr'],
- focusWhy:'Rest is where adaptation happens. VO2 Max gains, strength, and body composition improvements are locked in during recovery — not during training. This day protects your HRV.',
- sections:[
-  {l:'Today',type:'rest',items:[
-   {name:'Morning walk (~8am)',sub:'Easy, leisurely. No effort target. Recovery, not training.'},
-   {name:'Evening walk (~6–7pm)',sub:'Same. Let your body absorb the week.'},
-   {name:'Optional: Apple Fitness+ yoga or meditation',sub:'10–15 min restorative only. Nothing intense.'}
-  ]},
-  {l:'Weekly check-in',type:'rest',items:[
-   {name:'Pull latest Apple Health data',sub:'Open Claude on iPhone and ask for a fresh dashboard update with your latest metrics.'},
-   {name:'Check HRV + resting HR',sub:'HRV below 50ms or HR above 65 bpm = reduce intensity next week.'},
-   {name:'Check VO2 Max trend',sub:'Declining 3+ weeks in a row = deload week needed.'},
-   {name:'Weight check',sub:'Look for 0.5–0.75 lb downward trend. Daily fluctuations are normal.'},
-   {name:'LIAP planning',sub:'Plan LIAP schedule for next week so mornings stay protected before strength sessions.'}
-  ]}
- ]}
+{short:'Sun',type:'rest',title:'Rest + Recovery',sub:'Walks only · Weekly health check-in',timing:'Rest day · let the week absorb',
+pills:['LIAP planning 3:47am','Breakfast 7am','Walk ~8am','Health check-in','Meal prep','Lunch 12:30pm','Dinner 5pm','Walk 6–7pm','Meal 8:30pm','Bed 9:45pm'],
+schedule:[
+{time:'3:47am',dot:'liap',title:'LIAP — Weekly Planning',desc:'Plan LIAP schedule for coming week. Protect morning blocks now.'},
+{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein.'},
+{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'Easy, leisurely. Recovery only.'},
+{time:'10:00am',dot:'apple',title:'Weekly Health Check-In',desc:'Open Claude. Review HRV, resting HR, VO2 Max, sleep, nutrition. Decide: progress to Week 2 or repeat?'},
+{time:'12:00pm',dot:'nut',title:'Meal Prep',desc:'Cook batch chicken, rice, roasted veg. Covers 3–4 days lunch and dinner.'},
+{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
+{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein.'},
+{time:'6:00pm',dot:'walk',title:'Evening Walk',desc:'Easy. Let the week absorb.'},
+{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein.'},
+{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Week 2 starts tomorrow.'}
+],
+sections:[
+{l:'Active Recovery',type:'rest',items:[
+{name:'Morning walk (~8am)',sub:'Easy, leisurely pace. No effort target. Recovery, not training.'},
+{name:'Evening walk (~6–7pm)',sub:'Same. Let your body absorb everything from the week.'},
+{name:'Optional: Apple Fitness+ yoga',sub:'10–15 min restorative only. Nothing intense. Completely optional.'}
+]},
+{l:'Weekly Check-In',type:'rest',items:[
+{name:'Review HRV',sub:'Below 50ms sustained = lighter next week. Above 65ms = can push harder.'},
+{name:'Check resting HR',sub:'Above 65 bpm sustained = warning sign. Below 60 = green zone.'},
+{name:'Review nutrition in Lose It',sub:'Did you hit 140g protein daily? Where were the gaps? Adjust approach based on real data.'},
+{name:'How did the week feel?',sub:'Manageable → Week 2 progressions. Hard → repeat Week 1. Both are valid.'},
+{name:'LIAP planning',sub:'Plan next week\'s LIAP schedule so morning blocks stay protected.'},
+{name:'Meal prep',sub:'Cook chicken, rice, roasted veg. Covers 3–4 days with zero weekday effort.'}
+]}
+]}
 ];
 
-let sel=0;
+let selDay=0;
+function dotColor(t){return t==='str'?'#c8f060':t==='run'?'#60c8f0':t==='mix'?'#f0a860':'#55555f';}
 
-function dotColor(t){return{str:'#c8f060',run:'#60c8f0',af:'#f060a8',rest:'#55555f',dash:'#c060f0'}[t]||'#55555f'}
+function renderTopbar(){
+  const names=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  document.getElementById('top-title').textContent=names[selDay];
+  document.getElementById('top-sub').textContent=DAYS[selDay].title;
+}
 
 function renderNav(){
-  document.getElementById('nav-strip').innerHTML=NAV.map((d,i)=>`
-    <div class="nav-btn active-${i===sel?d.type:''}" onclick="go(${i})" style="${i!==sel?'border-color:var(--border)':''}">
-      <div class="n-label" style="${i!==sel?'color:var(--muted)':''}">${d.short}</div>
-      <div class="n-dot" style="background:${dotColor(d.type)}"></div>
+  document.getElementById('day-strip').innerHTML=DAYS.map((d,i)=>`
+    <div class="day-btn ${i===selDay?'sel':''}" data-type="${d.type}" onclick="goDay(${i})">
+      <div class="d-label">${d.short}</div>
+      <div class="d-dot" style="background:${dotColor(d.type)}"></div>
     </div>`).join('');
 }
 
-function renderDash(){
-  document.getElementById('top-title').textContent='Dashboard';
-  document.getElementById('top-sub').textContent='Week of Apr 6–12 · from Apple Health';
-
-  let h='';
-
-  // Alerts
-  h+=`<div class="dash-h">Priority flags</div>`;
-  h+=`<div class="alert-card alert-bad"><div class="alert-icon">&#9888;</div><div><div class="alert-title">VO2 Max declining</div><div class="alert-body">Down from 45.4 on Mar 23 to 43.5 today — 3+ weeks of decline hits your burnout threshold. HRV is strong (80ms) so this is likely adaptation lag from adding runs. Watch closely this week.</div></div></div>`;
-  h+=`<div class="alert-card alert-warn"><div class="alert-icon">&#9888;</div><div><div class="alert-title">Protein critically under target</div><div class="alert-body">7-day average: 97g vs your 140g floor. You are 43g short every day. At this deficit with active training, muscle preservation is at risk. This is the #1 nutrition fix needed.</div></div></div>`;
-  h+=`<div class="alert-card alert-warn"><div class="alert-icon">&#9888;</div><div><div class="alert-title">Sleep fragmentation</div><div class="alert-body">Multiple wake events per night across the week — 7+ interruptions on Friday Apr 10. Fragmented sleep impairs cardiovascular adaptation and suppresses VO2 Max gains more than almost any other factor.</div></div></div>`;
-  h+=`<div class="alert-card alert-good"><div class="alert-icon">&#10003;</div><div><div class="alert-title">HRV trending up strongly</div><div class="alert-body">From 61.8ms in mid-March to 80.6ms this week. A 30% improvement in 4 weeks. Your recovery quality has improved considerably despite the VO2 Max dip.</div></div></div>`;
-
-  // Cardiovascular
-  h+=`<div class="dash-h">Cardiovascular</div>`;
-  h+=`<div class="metrics-2">
-    <div class="m-card c-warn">
-      <div class="m-lbl">VO2 Max</div>
-      <div class="m-val">43.5<span class="m-unit">ml/kg/min</span></div>
-      <span class="m-status s-warn">Declining</span>
-      <div class="m-sub">Peak 45.4 on Mar 23 · Target 45+ by wk 12</div>
-      <div class="bar-wrap"><div class="bar" style="width:72%;background:var(--warn)"></div></div>
-    </div>
-    <div class="m-card c-good">
-      <div class="m-lbl">Resting HR</div>
-      <div class="m-val">59<span class="m-unit">bpm</span></div>
-      <span class="m-status s-good">Good</span>
-      <div class="m-sub">This week avg · Target stay below 60</div>
-      <div class="bar-wrap"><div class="bar" style="width:78%;background:var(--good)"></div></div>
-    </div>
-  </div>
-  <div class="metrics-2">
-    <div class="m-card c-good">
-      <div class="m-lbl">HRV</div>
-      <div class="m-val">80.6<span class="m-unit">ms</span></div>
-      <span class="m-status s-good">Excellent</span>
-      <div class="m-sub">Up from 61.8ms in March · Target above 60ms</div>
-      <div class="bar-wrap"><div class="bar" style="width:90%;background:var(--good)"></div></div>
-    </div>
-    <div class="m-card c-info">
-      <div class="m-lbl">Blood Oxygen</div>
-      <div class="m-val">97.6<span class="m-unit">%</span></div>
-      <span class="m-status s-good">Normal</span>
-      <div class="m-sub">7-day avg · Healthy range 95–100%</div>
-      <div class="bar-wrap"><div class="bar" style="width:97%;background:var(--info)"></div></div>
-    </div>
-  </div>
-  <div class="m-card c-info" style="margin-bottom:8px">
-    <div class="m-lbl">Avg Heart Rate</div>
-    <div class="m-val">72<span class="m-unit">bpm</span></div>
-    <span class="m-status s-info">All-day average</span>
-    <div class="m-sub">Includes resting + active. Respiratory rate avg 12.7 breaths/min — normal range.</div>
-  </div>`;
-
-  // Body
-  h+=`<div class="dash-h">Body composition</div>`;
-  h+=`<div class="metrics-2">
-    <div class="m-card c-good">
-      <div class="m-lbl">Weight</div>
-      <div class="m-val">156<span class="m-unit">lbs</span></div>
-      <span class="m-status s-good">On track</span>
-      <div class="m-sub">Last recorded Apr 3 · Target 152–154 lbs</div>
-      <div class="bar-wrap"><div class="bar" style="width:55%;background:var(--good)"></div></div>
-    </div>
-    <div class="m-card c-muted">
-      <div class="m-lbl">Body fat %</div>
-      <div class="m-val">—</div>
-      <span class="m-status" style="background:#1a1a1c;color:var(--muted)">Not logged</span>
-      <div class="m-sub">Last known 14.8% · Target 12–13% · Log via scale or Health app</div>
-    </div>
-  </div>`;
-
-  // Activity
-  h+=`<div class="dash-h">Activity — week of Apr 6–12</div>`;
-  const days7=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const steps=[12556,19874,13901,11644,8990,1628,9909];
-  const stepMax=Math.max(...steps);
-  h+=`<div class="week-table">`;
-  steps.forEach((s,i)=>{
-    const pct=Math.round(s/stepMax*100);
-    const flag=s<8000?'&#9650;':'';
-    const col=s>=10000?'var(--good)':s>=7000?'var(--warn)':'var(--bad)';
-    h+=`<div class="wt-row"><span class="wt-day">${days7[i]}</span><div class="wt-bar-wrap"><div class="wt-bar" style="width:${pct}%;background:${col}"></div></div><span class="wt-val" style="color:${col}">${s.toLocaleString()}<span class="wt-flag">${flag}</span></span></div>`;
+function renderDayContent(){
+  const d=DAYS[selDay];
+  const tagClass={str:'s-tag-str',run:'s-tag-run',rest:'s-tag-rest',mix:'s-tag-mix'}[d.type];
+  const tagLabel={str:'Strength',run:'Run',rest:'Rest',mix:'Strength + Run'}[d.type];
+  const timingClass={str:'t-str',run:'t-run',rest:'t-rest',mix:'t-mix'}[d.type];
+  let h=`<span class="s-tag ${tagClass}">${tagLabel}</span>
+    <div class="s-title">${d.title}</div>
+    <div class="s-sub">${d.sub}</div>
+    <div class="s-timing ${timingClass}">${d.timing}</div>`;
+  h+=`<div class="sec-lbl">Day Schedule</div><div class="timeline">`;
+  d.schedule.forEach(ev=>{
+    h+=`<div class="tl-item"><div class="tl-time">${ev.time}</div><div class="tl-dot-wrap"><div class="tl-dot ${ev.dot}"></div></div><div class="tl-body"><div class="tl-title">${ev.title}</div><div class="tl-desc">${ev.desc}</div></div></div>`;
   });
   h+=`</div>`;
-
-  const dist=[6.68,10.59,7.51,6.06,4.69,0.82,5.07];
-  const exMin=[62,103,54,43,25,1,38];
-  h+=`<div class="metrics-3">
-    <div class="m-card c-info">
-      <div class="m-lbl">Avg steps/day</div>
-      <div class="m-val">9,786</div>
-      <div class="m-sub">Target 10k/day</div>
-    </div>
-    <div class="m-card c-info">
-      <div class="m-lbl">Avg distance</div>
-      <div class="m-val">5.1<span class="m-unit">mi/day</span></div>
-      <div class="m-sub">Walking + running</div>
-    </div>
-    <div class="m-card c-info">
-      <div class="m-lbl">Exercise min</div>
-      <div class="m-val">326<span class="m-unit">wk</span></div>
-      <div class="m-sub">Avg 47 min/day</div>
-    </div>
-  </div>`;
-
-  // Calories
-  h+=`<div class="dash-h">Energy balance — week of Apr 6–12</div>`;
-  const calIn=[1492,2357,1619,1288,2144,3070,1941];
-  const calAct=[715,1011,792,659,554,87,495];
-  const calRest=[1814,1834,1835,1823,1828,1682,1768];
-  const calMax=Math.max(...calIn);
-  h+=`<div class="week-table">`;
-  calIn.forEach((c,i)=>{
-    const total=calAct[i]+calRest[i];
-    const net=c-total;
-    const pct=Math.round(c/calMax*100);
-    const col=c>=2000?'var(--good)':c>=1600?'var(--warn)':'var(--bad)';
-    const netStr=net>0?`+${net}`:`${net}`;
-    const netCol=net<0?'var(--good)':'var(--bad)';
-    h+=`<div class="wt-row"><span class="wt-day">${days7[i]}</span><div class="wt-bar-wrap"><div class="wt-bar" style="width:${pct}%;background:${col}"></div></div><span class="wt-val">${c.toLocaleString()} kcal <span style="color:${netCol};font-size:10px">${netStr}</span></span></div>`;
-  });
-  h+=`</div>`;
-  h+=`<div class="m-card c-muted" style="margin-bottom:8px">
-    <div class="m-lbl">Week avg · target 2,275 kcal</div>
-    <div style="display:flex;gap:16px;margin-top:4px">
-      <div><div class="m-val" style="font-size:18px">1,987</div><div class="m-sub">avg calories in</div></div>
-      <div><div class="m-val" style="font-size:18px">2,329</div><div class="m-sub">avg total burn</div></div>
-      <div><div class="m-val" style="font-size:18px;color:var(--good)">−342</div><div class="m-sub">avg daily deficit</div></div>
-    </div>
-  </div>`;
-
-  // Nutrition
-  h+=`<div class="dash-h">Nutrition — 7-day averages</div>`;
-  h+=`<div class="week-table">`;
-  const macros=[
-    {n:'Calories',avg:1987,tgt:2275,unit:'kcal',ok:false},
-    {n:'Protein',avg:97,tgt:140,unit:'g',ok:false},
-    {n:'Carbs',avg:159,tgt:260,unit:'g',ok:false},
-    {n:'Fat',avg:145,tgt:75,unit:'g',ok:false,over:true}
-  ];
-  macros.forEach(m=>{
-    const pct=Math.min(100,Math.round(m.avg/m.tgt*100));
-    const over=m.over;
-    const col=over?(m.avg>m.tgt?'var(--bad)':'var(--good)'):(pct>=85?'var(--good)':pct>=60?'var(--warn)':'var(--bad)');
-    const flag=over?(m.avg>m.tgt?'Over':'Under'):(pct>=85?'On track':pct>=60?'Low':'Critical');
-    const fcol=over?(m.avg>m.tgt?'s-bad':'s-good'):(pct>=85?'s-good':pct>=60?'s-warn':'s-bad');
-    h+=`<div class="wt-row">
-      <span class="wt-day" style="min-width:52px">${m.n}</span>
-      <div class="wt-bar-wrap"><div class="wt-bar" style="width:${pct}%;background:${col}"></div></div>
-      <span class="wt-val">${m.avg}${m.unit} <span class="m-status ${fcol}" style="font-size:10px;padding:1px 5px">${flag}</span></span>
-    </div>`;
-  });
-  h+=`</div>`;
-  h+=`<div class="m-card c-bad" style="margin-bottom:8px">
-    <div class="m-lbl">Critical action needed</div>
-    <div style="font-size:12px;color:var(--text);line-height:1.6;margin-top:4px">Protein at 97g average is 43g short of your 140g non-negotiable floor every single day. With active training in a caloric deficit, this directly risks muscle loss. Prioritise protein at every meal — aim for 35g per sitting across 4 meals.</div>
-  </div>`;
-
-  // Sleep
-  h+=`<div class="dash-h">Sleep — this week</div>`;
-  h+=`<div class="m-card c-warn" style="margin-bottom:8px">
-    <div class="m-lbl">Sleep quality</div>
-    <div class="m-val" style="font-size:16px;margin-bottom:6px">Fragmented</div>
-    <div style="font-size:12px;color:var(--muted);line-height:1.6">Multiple wake events detected nightly. Friday Apr 10 had 7+ interruptions. Fragmented sleep suppresses VO2 Max adaptation and reduces HRV recovery. The 3:47am LIAP block is creating a short sleep window — prioritise sleep quality within it.</div>
-    <div class="sleep-legend" style="margin-top:10px">
-      <div class="sl-item"><div class="sl-dot" style="background:#404880"></div>Core</div>
-      <div class="sl-item"><div class="sl-dot" style="background:#6060c0"></div>REM</div>
-      <div class="sl-item"><div class="sl-dot" style="background:#2040a0"></div>Deep</div>
-      <div class="sl-item"><div class="sl-dot" style="background:#302030"></div>Awake</div>
-    </div>
-  </div>`;
-
-  // Wrist temp
-  h+=`<div class="metrics-2">
-    <div class="m-card c-good">
-      <div class="m-lbl">Wrist temp (sleep)</div>
-      <div class="m-val">36.3<span class="m-unit">°C</span></div>
-      <span class="m-status s-good">Normal</span>
-      <div class="m-sub">97.3°F · No fever or illness signal</div>
-    </div>
-    <div class="m-card c-muted">
-      <div class="m-lbl">Water intake</div>
-      <div class="m-val">—</div>
-      <span class="m-status" style="background:#1a1a1c;color:var(--muted)">Not logged</span>
-      <div class="m-sub">Log water in Health app · Target 3L/day with training</div>
-    </div>
-  </div>`;
-
-  // Burnout thresholds
-  h+=`<div class="dash-h">Burnout thresholds</div>`;
-  h+=`<div class="week-table">
-    <div class="wt-row"><span style="font-size:12px;color:var(--muted)">HRV below 50ms</span><span class="wt-val"><span class="m-status s-good">80.6ms — safe</span></span></div>
-    <div class="wt-row"><span style="font-size:12px;color:var(--muted)">Resting HR above 65 bpm</span><span class="wt-val"><span class="m-status s-good">59 bpm — safe</span></span></div>
-    <div class="wt-row"><span style="font-size:12px;color:var(--muted)">VO2 Max declining 3+ wks</span><span class="wt-val"><span class="m-status s-bad">Triggered — monitor</span></span></div>
-    <div class="wt-row"><span style="font-size:12px;color:var(--muted)">Sleep fragmentation</span><span class="wt-val"><span class="m-status s-warn">Elevated — address</span></span></div>
-  </div>`;
-
-  h+=`<div class="updated">Last synced from Apple Health · Apr 13 2026 · Update each Sunday</div>`;
-  document.getElementById('content').innerHTML=h;
-}
-
-function renderDay(i){
-  const d=DAYS[i];
-  const nav=NAV[i+1];
-  const dayNames=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  document.getElementById('top-title').textContent=dayNames[i];
-  document.getElementById('top-sub').textContent=nav.title;
-  const tagCls={str:'s-tag-str',run:'s-tag-run',af:'s-tag-af',rest:'s-tag-rest'}[d.type];
-  const tagLbl={str:'Strength',run:'Run',af:'AF+ Day',rest:'Rest'}[d.type];
-  const timCls={str:'t-str',run:'t-run',af:'t-af',rest:'t-rest'}[d.type];
-  let h=`<span class="s-tag ${tagCls}">${tagLbl}</span>
-    <div class="s-title">${nav.title}</div>
-    <div class="s-sub">${nav.sub}</div>
-    <div class="s-timing ${timCls}">${d.timing}</div>
-    <div class="focus-card">
-      <div class="focus-title">Today's metric focus</div>
-      <div class="focus-tags">${d.focus.map((f,fi)=>`<span class="focus-tag ${d.focusCls[fi]}">${f}</span>`).join('')}</div>
-      <div class="focus-why">${d.focusWhy}</div>
-    </div>`;
   d.sections.forEach(s=>{
     h+=`<div class="sec-lbl">${s.l}</div>`;
     if(s.type==='af'){
@@ -648,42 +589,22 @@ function renderDay(i){
     } else if(s.type==='run'){
       const grid=s.items.filter(it=>it.lbl);
       const exs=s.items.filter(it=>!it.lbl);
-      if(grid.length===2){
-        h+=`<div class="run-grid">`;
-        grid.slice(0,2).forEach(it=>{h+=`<div class="run-card"><div class="run-lbl">${it.lbl}</div><div class="run-val">${it.val}</div><div class="run-note">${it.note}</div></div>`;});
-        h+=`</div>`;
-        if(grid[2])h+=`<div class="run-card-full"><div class="run-lbl">${grid[2].lbl}</div><div class="run-val">${grid[2].val}</div><div class="run-note">${grid[2].note}</div></div>`;
-      } else {
-        grid.forEach(it=>{h+=`<div class="run-card-full"><div class="run-lbl">${it.lbl}</div><div class="run-val">${it.val}</div><div class="run-note">${it.note}</div></div>`;});
-      }
-      exs.forEach((it,idx)=>{h+=buildEx(it,`${i}-${s.l}-${idx}`);});
+      if(grid.length===2){h+=`<div class="run-grid">`;grid.slice(0,2).forEach(it=>{h+=`<div class="run-card"><div class="run-lbl">${it.lbl}</div><div class="run-val">${it.val}</div><div class="run-note">${it.note}</div></div>`;});h+=`</div>`;if(grid[2])h+=`<div class="run-card-full"><div class="run-lbl">${grid[2].lbl}</div><div class="run-val">${grid[2].val}</div><div class="run-note">${grid[2].note}</div></div>`;}
+      else{grid.forEach(it=>{h+=`<div class="run-card-full"><div class="run-lbl">${it.lbl}</div><div class="run-val">${it.val}</div><div class="run-note">${it.note}</div></div>`;});}
+      exs.forEach((it,idx)=>{h+=buildEx(it,`${selDay}-${s.l}-${idx}`);});
     } else if(s.type==='rest'){
       s.items.forEach(it=>{h+=`<div class="rest-card"><div class="rest-name">${it.name}</div><div class="rest-sub">${it.sub}</div></div>`;});
     } else {
-      s.items.forEach((it,idx)=>{h+=buildEx(it,`${i}-${s.l}-${idx}`);});
+      s.items.forEach((it,idx)=>{h+=buildEx(it,`${selDay}-${s.l}-${idx}`);});
     }
   });
   h+=`<div class="pill-row">${d.pills.map(p=>`<span class="pill">${p}</span>`).join('')}</div>`;
-  document.getElementById('content').innerHTML=h;
+  document.getElementById('day-content').innerHTML=h;
 }
 
 function buildEx(it,uid){
-  const badges=(it.badges||[]).map(b=>`<span class="ex-badge ${b.c}">${b.t}</span>`).join('');
-  let h=`<div class="ex" id="ex-${uid}">
-    <div class="ex-hdr" onclick="toggleEx('${uid}')">
-      <div class="ex-left">
-        <div class="ex-name">${it.name}</div>
-        <div class="ex-sets">${it.sets||''}</div>
-        ${badges?`<div class="ex-badges">${badges}</div>`:''}
-      </div>
-      <div class="ex-arr">&#9662;</div>
-    </div>
-    <div class="ex-body">`;
-  if(it.metricNote)h+=`<div class="callout c-metric"><div class="c-lbl">Why this helps your metrics</div>${it.metricNote}</div>`;
-  if(it.how&&it.how.length){
-    h+=`<div class="how-lbl">How to do it</div>`;
-    it.how.forEach((step,si)=>{h+=`<div class="how-step"><div class="how-n">${si+1}</div><div>${step}</div></div>`;});
-  }
+  let h=`<div class="ex" id="ex-${uid}"><div class="ex-hdr" onclick="toggleEx('${uid}')"><div class="ex-left"><div class="ex-name">${it.name}</div><div class="ex-sets">${it.sets||''}</div></div><div class="ex-arr">▾</div></div><div class="ex-body">`;
+  if(it.how&&it.how.length){h+=`<div class="how-lbl">How to do it</div>`;it.how.forEach((step,i)=>{h+=`<div class="how-step"><div class="how-n">${i+1}</div><div>${step}</div></div>`;});}
   if(it.tip)h+=`<div class="callout c-tip"><div class="c-lbl">Tip</div>${it.tip}</div>`;
   if(it.warn)h+=`<div class="callout c-warn"><div class="c-lbl">Watch out</div>${it.warn}</div>`;
   if(it.prog)h+=`<div class="callout c-prog"><div class="c-lbl">Progression</div>${it.prog}</div>`;
@@ -691,21 +612,16 @@ function buildEx(it,uid){
   return h;
 }
 
-function toggleEx(uid){document.getElementById('ex-'+uid).classList.toggle('open')}
+function toggleEx(uid){document.getElementById('ex-'+uid).classList.toggle('open');}
 
-function go(i){
-  sel=i;renderNav();
-  if(i===0)renderDash();
-  else renderDay(i-1);
+function goDay(i){
+  selDay=i;renderNav();renderDayContent();renderTopbar();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 const today=new Date().getDay();
-sel=today===0?7:today===1?0:today-1;
-if(sel>7)sel=0;
-renderNav();
-if(sel===0)renderDash();
-else renderDay(sel-1);
+selDay=today===0?6:today-1;
+renderNav();renderDayContent();renderTopbar();
 </script>
 </body>
 </html>
