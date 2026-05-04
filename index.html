@@ -5,623 +5,914 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Health">
-<title>Week 1 · Health Plan</title>
+<meta name="apple-mobile-web-app-title" content="Health Hub">
+<title>Health Dashboard — Week of May 4</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0e0e0f;--surf:#17171a;--surf2:#202024;--border:#2a2a2f;
-  --text:#f0efe8;--muted:#65656f;
-  --str:#c8f060;--run:#60c8f0;--af:#f060a8;--rest:#55555f;
-  --nut:#f0a860;--sleep:#a860f0;--health:#60f0a8;
+  --bg:#0e0e0f;--surf:#17171a;--surf2:#202024;--surf3:#252529;--border:#2a2a2f;
+  --text:#f0efe8;--muted:#65656f;--dim:#3a3a42;
+  --green:#c8f060;--blue:#60c8f0;--pink:#f060a8;--amber:#f0b040;--red:#f05050;
+  --green-bg:#0e1708;--blue-bg:#081420;--pink-bg:#1a0810;--amber-bg:#1a1000;--red-bg:#1a0808;
   --fh:'Syne',sans-serif;--fm:'DM Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:var(--bg);color:var(--text);font-family:var(--fm);min-height:100vh;overscroll-behavior:none}
 body{padding-bottom:80px}
-.topbar{position:sticky;top:0;z-index:100;background:rgba(14,14,15,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:16px 20px 12px}
+
+/* ── TOP BAR ── */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(14,14,15,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 20px 12px}
 .safe-top{height:env(safe-area-inset-top,0px)}
-.top-eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
-.top-title{font-family:var(--fh);font-size:22px;font-weight:800;line-height:1}
-.top-sub{font-size:11px;color:var(--muted);margin-top:3px}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(14,14,15,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;padding:8px 0 env(safe-area-inset-bottom,8px)}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px;cursor:pointer;border:none;background:none;color:var(--muted);font-family:var(--fm);transition:color .15s}
-.nav-btn.active{color:var(--text)}
-.nav-icon{font-size:18px;line-height:1}
-.nav-label{font-size:9px;letter-spacing:.08em;text-transform:uppercase}
-.day-strip{display:flex;gap:6px;padding:12px 20px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
-.day-strip::-webkit-scrollbar{display:none}
-.day-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--surf);cursor:pointer;transition:all .15s}
-.day-btn[data-type="str"].sel{border-color:var(--str);background:#141c08}
-.day-btn[data-type="run"].sel{border-color:var(--run);background:#081620}
-.day-btn[data-type="rest"].sel{border-color:var(--muted);background:#141416}
-.day-btn[data-type="mix"].sel{border-color:var(--nut);background:#201408}
-.d-label{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);transition:color .15s}
-.day-btn[data-type="str"].sel .d-label{color:var(--str)}
-.day-btn[data-type="run"].sel .d-label{color:var(--run)}
-.day-btn[data-type="rest"].sel .d-label{color:var(--muted)}
-.day-btn[data-type="mix"].sel .d-label{color:var(--nut)}
-.d-dot{width:5px;height:5px;border-radius:50%}
-.content{padding:20px;display:none}
-.content.active{display:block}
-.s-tag{display:inline-block;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:6px;margin-bottom:12px}
-.s-tag-str{background:#141c08;color:var(--str);border:1px solid #263610}
-.s-tag-run{background:#081620;color:var(--run);border:1px solid #103050}
-.s-tag-rest{background:#141416;color:var(--muted);border:1px solid var(--border)}
-.s-tag-mix{background:#201408;color:var(--nut);border:1px solid #403010}
-.s-tag-nut{background:#201408;color:var(--nut);border:1px solid #403010}
-.s-tag-sleep{background:#180a28;color:var(--sleep);border:1px solid #301848}
-.s-tag-health{background:#081a12;color:var(--health);border:1px solid #103828}
-.s-title{font-family:var(--fh);font-size:24px;font-weight:800;line-height:1.1;margin-bottom:4px}
-.s-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:8px}
-.s-timing{font-size:11px;font-weight:500;padding:6px 10px;border-radius:6px;display:inline-block;margin-bottom:22px}
-.t-str{background:#141c08;color:var(--str)}
-.t-run{background:#081620;color:var(--run)}
-.t-rest{background:#141416;color:var(--muted)}
-.t-mix{background:#201408;color:var(--nut)}
-.t-nut{background:#201408;color:var(--nut)}
-.t-sleep{background:#180a28;color:var(--sleep)}
-.t-health{background:#081a12;color:var(--health)}
-.sec-lbl{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px;display:flex;align-items:center;gap:10px}
-.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
-.af-block{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--af);border-radius:12px;padding:14px 16px;margin-bottom:8px}
-.af-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:5px}
-.af-sub{font-size:12px;color:var(--muted);line-height:1.6}
-.nut-block{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--nut);border-radius:12px;padding:14px 16px;margin-bottom:8px}
-.nut-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:5px;color:var(--nut)}
-.nut-sub{font-size:12px;color:var(--muted);line-height:1.6}
-.sleep-block{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--sleep);border-radius:12px;padding:14px 16px;margin-bottom:8px}
-.sleep-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:5px;color:var(--sleep)}
-.sleep-sub{font-size:12px;color:var(--muted);line-height:1.6}
-.ex{background:var(--surf);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;transition:border-color .15s}
-.ex.open{border-color:#383840}
-.ex-hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;gap:12px;user-select:none}
-.ex-hdr:active{background:var(--surf2)}
-.ex-name{font-family:var(--fh);font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
-.ex-sets{font-size:11px;color:var(--str);font-weight:500}
-.ex-arr{font-size:13px;color:var(--muted);transition:transform .2s;flex-shrink:0}
-.ex.open .ex-arr{transform:rotate(180deg)}
-.ex-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}
-.ex.open .ex-body{display:block}
-.how-lbl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
-.how-step{display:flex;gap:10px;margin-bottom:9px;font-size:12px;color:var(--text);line-height:1.65}
-.how-n{min-width:20px;height:20px;border-radius:50%;background:var(--surf2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);flex-shrink:0;margin-top:1px}
-.callout{border-radius:8px;padding:9px 12px;margin-top:8px;font-size:12px;line-height:1.55}
-.c-tip{background:#121a07;color:#9acc38;border:1px solid #203608}
-.c-warn{background:#1e1308;color:#d09040;border:1px solid #362008}
-.c-prog{background:#071420;color:#40aad0;border:1px solid #0c2840}
-.c-alert{background:#1e0808;color:#f06060;border:1px solid #401010}
-.c-lbl{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;opacity:.65}
-.run-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.run-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px}
-.run-card-full{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px}
-.run-lbl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.run-val{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--run);line-height:1}
-.run-note{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
-.rest-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:8px}
-.rest-name{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:4px}
-.rest-sub{font-size:12px;color:var(--muted);line-height:1.55}
+.top-eyebrow{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.top-row{display:flex;align-items:baseline;justify-content:space-between}
+.top-title{font-family:var(--fh);font-size:20px;font-weight:800;line-height:1}
+.top-date{font-size:10px;color:var(--muted)}
+.top-status{display:flex;gap:6px;margin-top:8px}
+.status-pill{font-size:10px;padding:3px 8px;border-radius:20px;border:1px solid;letter-spacing:.06em}
+.sp-green{background:var(--green-bg);color:var(--green);border-color:#2a4010}
+.sp-amber{background:var(--amber-bg);color:var(--amber);border-color:#3a2800}
+.sp-red{background:var(--red-bg);color:var(--red);border-color:#3a1010}
+
+/* ── TAB NAV ── */
+.tab-nav{display:flex;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:73px;z-index:99;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;padding:11px 18px;font-family:var(--fm);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--blue)}
+.tab-btn:active{background:var(--surf)}
+
+/* ── CONTENT ── */
+.tab-content{display:none;padding:16px 16px 0}
+.tab-content.active{display:block}
+
+/* ── SECTION LABELS ── */
+.sec{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:20px 0 10px;display:flex;align-items:center;gap:10px}
+.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+.sec:first-child{margin-top:4px}
+
+/* ── METRIC GRID ── */
 .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.metric-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px}
+.metric-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px 14px 12px}
 .metric-card.full{grid-column:1/-1}
-.metric-lbl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.metric-val{font-family:var(--fh);font-size:22px;font-weight:800;line-height:1}
-.metric-note{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
-.metric-ok{color:var(--health)}
-.metric-warn{color:var(--nut)}
-.metric-danger{color:#f06060}
-.status-pill{display:inline-block;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;margin-top:6px}
-.s-ok{background:#081a12;color:var(--health);border:1px solid #103828}
-.s-warn{background:#201408;color:var(--nut);border:1px solid #403010}
-.s-danger{background:#1e0808;color:#f06060;border:1px solid #401010}
-.burnout-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:8px}
-.burnout-title{font-family:var(--fh);font-size:13px;font-weight:700;margin-bottom:12px}
-.burnout-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
-.burnout-row:last-child{border-bottom:none;padding-bottom:0}
-.burnout-metric{font-size:11px;color:var(--muted)}
-.burnout-right{display:flex;align-items:center;gap:8px}
-.burnout-val{font-family:var(--fh);font-size:13px;font-weight:700}
-.nut-week-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px}
-.nut-week-row:last-child{border-bottom:none}
-.nut-week-date{color:var(--muted);min-width:48px}
-.nut-week-vals{display:flex;gap:16px}
-.nut-ok{color:var(--health)}
-.nut-warn{color:var(--nut)}
-.nut-danger{color:#f06060}
-.timeline{margin-bottom:8px}
-.tl-item{display:flex;gap:12px;position:relative}
-.tl-item:not(:last-child)::before{content:'';position:absolute;left:35px;top:28px;bottom:0;width:1px;background:var(--border)}
-.tl-time{min-width:52px;font-size:10px;color:var(--muted);padding-top:8px;text-align:right;flex-shrink:0}
-.tl-dot-wrap{display:flex;flex-direction:column;align-items:center;padding-top:6px;flex-shrink:0}
-.tl-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--border);background:var(--surf2);flex-shrink:0}
-.tl-dot.str{border-color:var(--str);background:#141c08}
-.tl-dot.run{border-color:var(--run);background:#081620}
-.tl-dot.nut{border-color:var(--nut);background:#201408}
-.tl-dot.sleep{border-color:var(--sleep);background:#180a28}
-.tl-dot.walk{border-color:var(--health);background:#081a12}
-.tl-dot.liap{border-color:var(--af);background:#200a14}
-.tl-dot.apple{border-color:var(--muted);background:var(--surf2)}
-.tl-body{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;flex:1}
-.tl-title{font-family:var(--fh);font-size:12px;font-weight:700;margin-bottom:2px}
-.tl-desc{font-size:11px;color:var(--muted);line-height:1.5}
-.pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-.pill{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);color:var(--muted)}
-.macro-row{margin-bottom:14px}
-.macro-hdr{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px}
-.macro-name{color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:10px}
-.macro-track{height:6px;background:var(--surf2);border-radius:3px;overflow:hidden}
-.macro-fill{height:100%;border-radius:3px}
-.fill-pro{background:var(--str)}
-.fill-car{background:var(--run)}
-.fill-fat{background:var(--af)}
-.fill-cal{background:var(--nut)}
+.metric-card.accent-green{border-color:#2a4010;background:#0b1206}
+.metric-card.accent-blue{border-color:#103048;background:#060f1a}
+.metric-card.accent-amber{border-color:#3a2800;background:#110d00}
+.metric-card.accent-red{border-color:#3a1010;background:#110606}
+.m-lbl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.m-val{font-family:var(--fh);font-size:26px;font-weight:800;line-height:1;margin-bottom:3px}
+.m-val.green{color:var(--green)}
+.m-val.blue{color:var(--blue)}
+.m-val.amber{color:var(--amber)}
+.m-val.red{color:var(--red)}
+.m-val.muted{color:var(--muted)}
+.m-sub{font-size:10px;color:var(--muted);line-height:1.5}
+.m-trend{font-size:10px;margin-top:5px;padding:3px 7px;border-radius:4px;display:inline-block}
+.trend-up-good{background:#0e1708;color:var(--green)}
+.trend-down-good{background:#0e1708;color:var(--green)}
+.trend-warn{background:var(--amber-bg);color:var(--amber)}
+.trend-bad{background:var(--red-bg);color:var(--red)}
+
+/* ── SPARKLINE ── */
+.spark-wrap{margin-top:10px;height:36px;position:relative}
+svg.spark{width:100%;height:36px;overflow:visible}
+
+/* ── BURNOUT PANEL ── */
+.burnout-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--surf);border:1px solid var(--border);border-radius:10px;margin-bottom:6px}
+.burnout-label{font-size:12px;color:var(--text)}
+.burnout-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.burnout-badge{font-size:10px;padding:3px 9px;border-radius:20px;border:1px solid;flex-shrink:0;font-weight:500}
+.badge-clear{background:var(--green-bg);color:var(--green);border-color:#2a4010}
+.badge-watch{background:var(--amber-bg);color:var(--amber);border-color:#3a2800}
+.badge-alert{background:var(--red-bg);color:var(--red);border-color:#3a1010}
+
+/* ── MINI BAR CHART ── */
+.mini-bar-wrap{margin-top:10px}
+.mini-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.mini-bar-lbl{font-size:10px;color:var(--muted);width:34px;flex-shrink:0;text-align:right}
+.mini-bar-track{flex:1;height:6px;background:var(--surf2);border-radius:3px;overflow:hidden}
+.mini-bar-fill{height:100%;border-radius:3px;transition:width .3s}
+.mini-bar-val{font-size:10px;color:var(--muted);width:36px;flex-shrink:0}
+
+/* ── PROGRESS RING ── */
+.ring-wrap{display:flex;align-items:center;gap:16px;padding:14px;background:var(--surf);border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
+.ring-svg{flex-shrink:0}
+.ring-info .ring-title{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:3px}
+.ring-info .ring-sub{font-size:11px;color:var(--muted);line-height:1.55}
+
+/* ── NUTRITION MACRO ROW ── */
+.macro-row{display:flex;gap:6px;margin-bottom:8px}
+.macro-card{flex:1;background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:10px 10px 8px;text-align:center}
+.macro-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.macro-val{font-family:var(--fh);font-size:18px;font-weight:800;line-height:1;margin-bottom:2px}
+.macro-target{font-size:9px;color:var(--muted)}
+.macro-bar{height:3px;background:var(--surf2);border-radius:2px;margin-top:6px;overflow:hidden}
+.macro-bar-fill{height:100%;border-radius:2px}
+
+/* ── PLAN CARDS ── */
+.plan-day{background:var(--surf);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.plan-day-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;user-select:none}
+.plan-day-hdr:active{background:var(--surf2)}
+.plan-day-left{display:flex;align-items:center;gap:10px}
+.plan-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.plan-day-name{font-family:var(--fh);font-size:14px;font-weight:700}
+.plan-day-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.plan-day-badge{font-size:10px;padding:3px 8px;border-radius:6px;flex-shrink:0}
+.plan-day-arr{font-size:12px;color:var(--muted);transition:transform .2s;flex-shrink:0;margin-left:6px}
+.plan-day.open .plan-day-arr{transform:rotate(180deg)}
+.plan-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
+.plan-day.open .plan-body{display:block}
+.plan-section{margin-top:12px}
+.plan-section-lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.plan-item{display:flex;gap:8px;margin-bottom:6px;font-size:12px;line-height:1.6;color:var(--text)}
+.plan-bullet{width:16px;height:16px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px}
+
+/* ── CALLOUTS ── */
+.callout{border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6}
+.callout-green{background:#0b1206;color:#9acc38;border:1px solid #1e3208}
+.callout-amber{background:#110d00;color:#c89030;border:1px solid #2e1e00}
+.callout-red{background:#110606;color:#c04040;border:1px solid #2e1010}
+.callout-blue{background:#06101a;color:#40a8d0;border:1px solid #0c2438}
+.c-head{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;opacity:.7}
+
+/* ── SLEEP TABLE ── */
+.sleep-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.sleep-row:last-child{border-bottom:none}
+.sleep-night{font-size:11px;color:var(--muted);width:52px;flex-shrink:0}
+.sleep-bar-wrap{flex:1;height:5px;background:var(--surf2);border-radius:3px;margin:0 10px;overflow:hidden}
+.sleep-bar{height:100%;border-radius:3px;background:var(--blue)}
+.sleep-dur{font-size:11px;font-family:var(--fh);font-weight:700;width:36px;text-align:right;flex-shrink:0}
+.sleep-flags{display:flex;gap:4px;margin-left:8px}
+.sleep-flag{font-size:8px;padding:1px 5px;border-radius:3px;border:1px solid}
+.sf-deep{background:#0a0e18;color:#7080c0;border-color:#1a2040}
+.sf-rem{background:#12080e;color:#a060b0;border-color:#2a1030}
+.sf-warn{background:var(--amber-bg);color:var(--amber);border-color:#3a2800}
+
+/* ── DEFICIT TRACKER ── */
+.deficit-bar-wrap{background:var(--surf2);border-radius:6px;height:10px;overflow:hidden;margin:10px 0 5px;position:relative}
+.deficit-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--green),#80d840)}
+.deficit-label-row{display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}
+
+/* ── TODAY HIGHLIGHT ── */
+.today-card{background:linear-gradient(135deg,#0d1a08 0%,#081420 100%);border:1px solid #2a3820;border-radius:14px;padding:16px;margin-bottom:8px}
+.today-eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin-bottom:6px;opacity:.8}
+.today-title{font-family:var(--fh);font-size:20px;font-weight:800;color:var(--text);margin-bottom:4px}
+.today-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.today-chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:10px;padding:4px 9px;border-radius:6px;border:1px solid var(--border);color:var(--muted)}
+.chip-green{background:var(--green-bg);color:var(--green);border-color:#2a4010}
+.chip-blue{background:var(--blue-bg);color:var(--blue);border-color:#103048}
+.chip-amber{background:var(--amber-bg);color:var(--amber);border-color:#3a2800}
+
+/* ── PRIORITY LIST ── */
+.priority-item{display:flex;gap:12px;padding:11px 14px;background:var(--surf);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;align-items:flex-start}
+.priority-num{font-family:var(--fh);font-size:18px;font-weight:800;color:var(--dim);flex-shrink:0;line-height:1;margin-top:1px}
+.priority-num.p1{color:var(--red)}
+.priority-num.p2{color:var(--amber)}
+.priority-num.p3{color:var(--blue)}
+.priority-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;font-family:var(--fh)}
+.priority-desc{font-size:11px;color:var(--muted);line-height:1.6}
+
+/* ── DATA FLAG ── */
+.data-flag{background:var(--surf);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:8px;padding:9px 12px;margin-bottom:6px;font-size:11px;color:var(--muted);line-height:1.55}
+.data-flag strong{color:var(--amber);font-weight:500}
 </style>
 </head>
 <body>
+
 <div class="topbar">
   <div class="safe-top"></div>
-  <div class="top-eyebrow" id="top-eyebrow">Week 1 · Health Plan</div>
-  <div class="top-title" id="top-title">Sunday</div>
-  <div class="top-sub" id="top-sub"></div>
+  <div class="top-eyebrow">Health Dashboard · May 4, 2026</div>
+  <div class="top-row">
+    <div class="top-title">Weekly Hub</div>
+    <div class="top-date">Data: Apr 20 – May 3</div>
+  </div>
+  <div class="top-status">
+    <span class="status-pill sp-green">Burnout: Clear</span>
+    <span class="status-pill sp-amber">Protein: Critical</span>
+    <span class="status-pill sp-amber">Fat: Watch</span>
+  </div>
 </div>
 
-<div class="content active" id="tab-day">
-  <div class="day-strip" id="day-strip"></div>
-  <div id="day-content" style="padding:20px"></div>
+<div class="tab-nav">
+  <div class="tab-btn active" onclick="switchTab('today')">Today</div>
+  <div class="tab-btn" onclick="switchTab('biomarkers')">Biomarkers</div>
+  <div class="tab-btn" onclick="switchTab('sleep')">Sleep</div>
+  <div class="tab-btn" onclick="switchTab('nutrition')">Nutrition</div>
+  <div class="tab-btn" onclick="switchTab('plan')">Week Plan</div>
 </div>
 
-<div class="content" id="tab-nutrition">
-  <div style="padding:20px">
-    <span class="s-tag s-tag-nut">Nutrition</span>
-    <div class="s-title">Daily Targets</div>
-    <div class="s-sub">2,275 kcal · 140g protein · 260g carbs · 75g fat</div>
-    <div class="s-timing t-nut">Lose It active · Syncing to Apple Health ✅</div>
+<!-- ══════════════════════════════════════
+     TAB: TODAY
+══════════════════════════════════════ -->
+<div class="tab-content active" id="tab-today">
 
-    <div class="sec-lbl">This Week — Actual (Apr 13–18)</div>
-    <div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:4px">
-        <span>Date</span>
-        <div style="display:flex;gap:20px"><span>Calories</span><span>Protein</span></div>
+  <div class="today-card" style="margin-top:16px">
+    <div class="today-eyebrow">Monday · Push Day</div>
+    <div class="today-title">Strength Session A</div>
+    <div class="today-sub">75 push-ups · 75 tricep dips · 10-min yoga warm-up · 5-min cooldown. Cap at 45 min total.</div>
+    <div class="today-chips">
+      <span class="chip-green chip">LIAP 3:47–6am</span>
+      <span class="chip-green chip">Strength 6–7:30am</span>
+      <span class="chip chip">Morning walk ~8am</span>
+      <span class="chip chip">Apple 8:30am</span>
+    </div>
+  </div>
+
+  <div class="sec">Biomarker Snapshot</div>
+  <div class="metric-grid">
+    <div class="metric-card accent-green">
+      <div class="m-lbl">Resting HR</div>
+      <div class="m-val green">50</div>
+      <div class="m-sub">bpm · personal low</div>
+      <div class="m-trend trend-down-good">↓ from 60 (Apr 20)</div>
+    </div>
+    <div class="metric-card accent-blue">
+      <div class="m-lbl">HRV</div>
+      <div class="m-val blue">69.6</div>
+      <div class="m-sub">ms · 14d avg 66.5ms</div>
+      <div class="m-trend trend-up-good">↑ recovered May 3</div>
+    </div>
+    <div class="metric-card accent-blue">
+      <div class="m-lbl">VO₂ Max</div>
+      <div class="m-val blue">42.79</div>
+      <div class="m-sub">mL/min·kg · last May 1</div>
+      <div class="m-trend trend-warn">Stabilized — watch</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-lbl">Sleep Last Night</div>
+      <div class="m-val blue">6h 59m</div>
+      <div class="m-sub">14d avg: ~7h 0m</div>
+      <div class="m-trend trend-up-good">Solid architecture</div>
+    </div>
+  </div>
+
+  <div class="sec">Burnout Indicators</div>
+  <div class="burnout-row">
+    <div><div class="burnout-label">Resting HR</div><div class="burnout-sub">Threshold: sustained &gt;65 bpm</div></div>
+    <div class="burnout-badge badge-clear">50 bpm ✓</div>
+  </div>
+  <div class="burnout-row">
+    <div><div class="burnout-label">HRV</div><div class="burnout-sub">Threshold: sustained &lt;50ms</div></div>
+    <div class="burnout-badge badge-clear">69.6ms ✓</div>
+  </div>
+  <div class="burnout-row">
+    <div><div class="burnout-label">VO₂ Max</div><div class="burnout-sub">Threshold: sustained decline</div></div>
+    <div class="burnout-badge badge-watch">Stabilized</div>
+  </div>
+  <div class="burnout-row">
+    <div><div class="burnout-label">Sleep Fragmentation</div><div class="burnout-sub">Threshold: increasing awake events</div></div>
+    <div class="burnout-badge badge-clear">Minimal ✓</div>
+  </div>
+  <div class="burnout-row">
+    <div><div class="burnout-label">Active Calories</div><div class="burnout-sub">Threshold: sustained drop</div></div>
+    <div class="burnout-badge badge-clear">Stable ✓</div>
+  </div>
+
+  <div class="sec">Top Priorities This Week</div>
+  <div class="priority-item">
+    <div class="priority-num p1">1</div>
+    <div><div class="priority-title">Fix Protein — Every Single Day</div><div class="priority-desc">Best logged day was 87g. Target is 140g. That gap costs muscle during your deficit. Aim for 35g per meal across 4 meals. No exceptions — this is the non-negotiable floor.</div></div>
+  </div>
+  <div class="priority-item">
+    <div class="priority-num p2">2</div>
+    <div><div class="priority-title">Log Macros Daily (Not Just Calories)</div><div class="priority-desc">Only 7 of 14 days had protein/carb/fat data. 6 consecutive days showed identical 2,000 kcal — likely manual estimates. Full food logging unlocks full visibility.</div></div>
+  </div>
+  <div class="priority-item">
+    <div class="priority-num p2">3</div>
+    <div><div class="priority-title">Audit the May 1 Fat Entry</div><div class="priority-desc">252g fat logged on May 1 — 3.4× the 75g target and mathematically takes up nearly all calories. Open Lose It and verify. Almost certainly a quantity error.</div></div>
+  </div>
+  <div class="priority-item">
+    <div class="priority-num p3">4</div>
+    <div><div class="priority-title">Watch VO₂ Max This Week</div><div class="priority-desc">Stabilized at 42.59–42.80 after post-run-start dip from 43.08. Expect recovery above 43 as running adaptation completes. Flag if it drops below 42.5.</div></div>
+  </div>
+  <div class="priority-item">
+    <div class="priority-num p3">5</div>
+    <div><div class="priority-title">Review Caffeine Timing</div><div class="priority-desc">1,272mg logged on 3 of 4 days with data — 3× the 400mg safety guideline. This may be suppressing appetite (explaining low protein) and affecting sleep quality. Verify and adjust.</div></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB: BIOMARKERS
+══════════════════════════════════════ -->
+<div class="tab-content" id="tab-biomarkers">
+
+  <div class="sec">Cardiovascular — 14-Day Trend</div>
+
+  <div class="metric-card full accent-green" style="margin-bottom:8px">
+    <div class="m-lbl">Resting Heart Rate (bpm) — Apr 20 to May 3</div>
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:4px">
+      <div class="m-val green">50</div>
+      <div class="m-sub">May 3 · personal tracked low</div>
+    </div>
+    <div class="m-trend trend-down-good" style="margin-bottom:10px">↓ 10 bpm improvement since Apr 20 (60 bpm)</div>
+    <div class="spark-wrap">
+      <svg class="spark" viewBox="0 0 300 36" preserveAspectRatio="none">
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c8f060" stop-opacity=".3"/><stop offset="100%" stop-color="#c8f060" stop-opacity="0"/></linearGradient></defs>
+        <!-- RHR values: 60,53,55,55,60,57,55,56,54,52,55,53,56,50 — normalized to 0–36 range (45–70 scale) -->
+        <polyline points="0,18 21,44 42,36 64,36 85,18 107,27 128,36 150,32 171,40 192,46 214,36 235,44 257,32 278,50" fill="none" stroke="none"/>
+        <!-- Sparkline path (inverted: lower = higher on screen = better) min=50, max=60, height=36 -->
+        <path d="M0,36 L21.5,25.2 L43,28.8 L64.5,28.8 L86,36 L107.5,30.6 L129,28.8 L150.5,29.9 L172,27 L193.5,23.4 L215,28.8 L236.5,25.2 L258,29.9 L279.5,18" fill="url(#g1)" stroke="none"/>
+        <path d="M0,36 L21.5,25.2 L43,28.8 L64.5,28.8 L86,36 L107.5,30.6 L129,28.8 L150.5,29.9 L172,27 L193.5,23.4 L215,28.8 L236.5,25.2 L258,29.9 L279.5,18" fill="none" stroke="#c8f060" stroke-width="1.5" stroke-linejoin="round"/>
+        <!-- Alert threshold line at 65 bpm -->
+        <line x1="0" y1="9" x2="300" y2="9" stroke="#f05050" stroke-width="0.5" stroke-dasharray="3,3" opacity=".4"/>
+        <text x="285" y="7.5" font-size="7" fill="#f05050" opacity=".5" text-anchor="end">alert</text>
+      </svg>
+    </div>
+    <div class="mini-bar-row" style="margin-top:6px">
+      <span style="font-size:10px;color:var(--muted)">14d avg: 55.1 bpm</span>
+      <span style="flex:1"></span>
+      <span style="font-size:10px;color:var(--green)">Alert threshold: >65 bpm sustained</span>
+    </div>
+  </div>
+
+  <div class="metric-card full accent-blue" style="margin-bottom:8px">
+    <div class="m-lbl">Heart Rate Variability (ms) — Apr 20 to May 3</div>
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:4px">
+      <div class="m-val blue">69.6</div>
+      <div class="m-sub">ms · May 3 · 14d avg 66.5ms</div>
+    </div>
+    <div class="m-trend trend-warn" style="margin-bottom:10px">Oscillating — one dip to 45.9ms (May 2), recovered</div>
+    <div class="spark-wrap">
+      <svg class="spark" viewBox="0 0 300 36" preserveAspectRatio="none">
+        <defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#60c8f0" stop-opacity=".25"/><stop offset="100%" stop-color="#60c8f0" stop-opacity="0"/></linearGradient></defs>
+        <!-- HRV: 51.3,89,89.1,77.4,95.6,53.5,52,57.1,56.1,74.6,52.6,67,45.9,69.6 -->
+        <!-- normalized: min=45, max=96, range=51, height=36. y = 36 - ((val-45)/51)*36 -->
+        <path d="M0,28.4 L21.5,5.3 L43,5.2 L64.5,11.0 L86,0 L107.5,27.3 L129,28.4 L150.5,25.3 L172,25.9 L193.5,12.4 L215,27.2 L236.5,18.5 L258,35.6 L279.5,17.3" fill="url(#g2)" stroke="none"/>
+        <path d="M0,28.4 L21.5,5.3 L43,5.2 L64.5,11.0 L86,0 L107.5,27.3 L129,28.4 L150.5,25.3 L172,25.9 L193.5,12.4 L215,27.2 L236.5,18.5 L258,35.6 L279.5,17.3" fill="none" stroke="#60c8f0" stroke-width="1.5" stroke-linejoin="round"/>
+        <!-- Alert threshold at 50ms: y = 36 - ((50-45)/51)*36 = 36-3.5 = 32.5 -->
+        <line x1="0" y1="32.5" x2="300" y2="32.5" stroke="#f05050" stroke-width="0.5" stroke-dasharray="3,3" opacity=".4"/>
+        <text x="285" y="31" font-size="7" fill="#f05050" opacity=".5" text-anchor="end">alert</text>
+        <!-- Circle the dip point at May 2 (index 12, x=258, y=35.6) -->
+        <circle cx="258" cy="35.6" r="4" fill="none" stroke="#f0b040" stroke-width="1" opacity=".8"/>
+      </svg>
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-top:4px">🟡 Circled point: May 2 dip to 45.9ms — isolated, recovered next day</div>
+  </div>
+
+  <div class="metric-grid">
+    <div class="metric-card accent-blue">
+      <div class="m-lbl">VO₂ Max</div>
+      <div class="m-val blue">42.79</div>
+      <div class="m-sub">mL/min·kg · last reading May 1</div>
+      <div class="m-trend trend-warn">↓ from 43.08 (Apr 22)</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-lbl">Walking HR Avg</div>
+      <div class="m-val green">81.5</div>
+      <div class="m-sub">bpm · May 3 · was 103 (Apr 20)</div>
+      <div class="m-trend trend-down-good">↓ efficiency up</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-lbl">Blood Oxygen</div>
+      <div class="m-val green">97.5%</div>
+      <div class="m-sub">14d avg · range 96.9–97.9%</div>
+      <div class="m-trend trend-up-good">Stable ✓</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-lbl">Resp. Rate</div>
+      <div class="m-val green">11.5</div>
+      <div class="m-sub">br/min · May 3 · was 13.1 Apr 20</div>
+      <div class="m-trend trend-down-good">↓ parasympathetic ✓</div>
+    </div>
+  </div>
+
+  <div class="sec">Activity</div>
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="m-lbl">Steps · 14d Avg</div>
+      <div class="m-val blue">12,359</div>
+      <div class="m-sub">per day · peak 23,098 (Apr 28)</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-lbl">Active Cal · 14d Avg</div>
+      <div class="m-val blue">746</div>
+      <div class="m-sub">kcal/day · peak 2,067 (May 2)</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-lbl">BMR · 14d Avg</div>
+      <div class="m-val muted">1,764</div>
+      <div class="m-sub">kcal/day resting burn</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-lbl">Est. TDEE</div>
+      <div class="m-val muted">2,510</div>
+      <div class="m-sub">kcal/day total expenditure</div>
+    </div>
+  </div>
+
+  <div class="callout callout-blue" style="margin-top:4px">
+    <div class="c-head">Cardio Adaptation — Verified Trend</div>
+    RHR dropped 10 bpm over 14 days. Walking HR dropped from 103 → 81.5 bpm for the same effort. Respiratory rate trending from 13.1 → 11.5 br/min. All three confirm genuine cardiovascular efficiency gains from the running + strength program.
+  </div>
+
+  <div class="callout callout-amber" style="margin-top:0">
+    <div class="c-head">VO₂ Max — Watch</div>
+    Dropped from 43.08 (Apr 22) to a stable range of 42.59–42.80. This is likely new-running adaptation lag, not true decline. Expect recovery above 43 in 2–3 weeks. Flag if it drops below 42.5.
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB: SLEEP
+══════════════════════════════════════ -->
+<div class="tab-content" id="tab-sleep">
+
+  <div class="sec">14-Night Sleep Log — Verified from Raw Stage Data</div>
+
+  <div class="data-flag"><strong>Data gap:</strong> Apr 24→25 night — no watch data. One incomplete tail on Apr 19→20. All other nights fully verified from Apple Health stage-level samples (316 records).</div>
+
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px">
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:10px;letter-spacing:.08em;text-transform:uppercase">
+      <span>Night</span><span style="flex:1;margin:0 10px">Duration</span><span>Stages</span>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">Apr 20</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:83%;background:var(--green)"></div></div>
+      <div class="sleep-dur" style="color:var(--green)">8h19m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">Apr 21</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:63%"></div></div>
+      <div class="sleep-dur">6h21m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">Apr 22</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:79%;background:var(--green)"></div></div>
+      <div class="sleep-dur" style="color:var(--green)">7h55m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">Apr 23</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:50%;background:var(--amber)"></div></div>
+      <div class="sleep-dur" style="color:var(--amber)">5h01m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span><span class="sleep-flag sf-warn">⚠</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">Apr 24</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:0%"></div></div>
+      <div class="sleep-dur" style="color:var(--muted)">—</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-warn">gap</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">Apr 25</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:75%;background:var(--green)"></div></div>
+      <div class="sleep-dur" style="color:var(--green)">7h32m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">Apr 26</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:69%"></div></div>
+      <div class="sleep-dur">6h52m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">Apr 27</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:68%"></div></div>
+      <div class="sleep-dur">6h47m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">Apr 28</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:71%;background:var(--green)"></div></div>
+      <div class="sleep-dur" style="color:var(--green)">7h05m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">Apr 29</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:70%;background:var(--blue)"></div></div>
+      <div class="sleep-dur" style="color:var(--blue)">7h03m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span><span class="sleep-flag sf-warn">LIAP</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">Apr 30</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:76%;background:var(--green)"></div></div>
+      <div class="sleep-dur" style="color:var(--green)">7h36m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">May 1</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:64%"></div></div>
+      <div class="sleep-dur">6h26m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span></div>
+    </div>
+    <div class="sleep-row">
+      <div class="sleep-night">May 2</div>
+      <div class="sleep-bar-wrap"><div class="sleep-bar" style="width:70%"></div></div>
+      <div class="sleep-dur">6h59m</div>
+      <div class="sleep-flags"><span class="sleep-flag sf-deep">D</span><span class="sleep-flag sf-rem">R</span></div>
+    </div>
+    <div style="border-top:1px solid var(--border);margin-top:10px;padding-top:10px;display:flex;justify-content:space-between;font-size:11px">
+      <span style="color:var(--muted)">13-night avg</span>
+      <span style="color:var(--blue);font-family:var(--fh);font-weight:700">~7h 0m</span>
+    </div>
+  </div>
+
+  <div class="metric-grid">
+    <div class="metric-card accent-green">
+      <div class="m-lbl">13-Night Avg</div>
+      <div class="m-val green">7h 0m</div>
+      <div class="m-sub">Better than the stated 6h target</div>
+    </div>
+    <div class="metric-card accent-amber">
+      <div class="m-lbl">Shortest Night</div>
+      <div class="m-val amber">5h 01m</div>
+      <div class="m-sub">Apr 23→24 — late night likely</div>
+    </div>
+  </div>
+
+  <div class="callout callout-green">
+    <div class="c-head">Architecture Assessment</div>
+    All 12 nights with data showed Core, Deep, and REM stages present. Awake events are brief (typically &lt;5 min total per night) and non-pathological. Sleep architecture is well-organized given the compressed 3:47am wake schedule.
+  </div>
+  <div class="callout callout-blue">
+    <div class="c-head">Apr 29→30 — LIAP Wake Confirmed</div>
+    72-minute awake gap from 3:05–4:17am PDT is the Apple Watch detecting your deliberate 3:47am LIAP start. Behavioral, not a sleep disorder. Actual sleep time on that night: ~7h3m after accounting for the gap.
+  </div>
+  <div class="callout callout-amber">
+    <div class="c-head">Apr 23→24 Short Night + Apr 24→25 Gap</div>
+    Only 5h1m on Apr 23→24 (lowest of the window). No data at all on Apr 24→25 — watch likely not worn. These two nights bracket the low HRV reading on Apr 24 (77ms). Possible under-recovery window.
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:4px;font-size:10px;color:var(--muted);flex-wrap:wrap">
+    <span><span class="sleep-flag sf-deep" style="display:inline">D</span> = Deep sleep confirmed</span>
+    <span><span class="sleep-flag sf-rem" style="display:inline">R</span> = REM confirmed</span>
+    <span><span class="sleep-flag sf-warn" style="display:inline">⚠</span> = Flag</span>
+    <span><span class="sleep-flag sf-warn" style="display:inline">LIAP</span> = LIAP wake event</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB: NUTRITION
+══════════════════════════════════════ -->
+<div class="tab-content" id="tab-nutrition">
+
+  <div class="data-flag" style="margin-top:16px"><strong>Data quality:</strong> Calories present all 14 days. Macros (protein/carbs/fat) present only 7 of 14 days. Apr 21–26 show identical 2,000 kcal — likely manual estimates. Water not tracked. May 3 and May 4 are partial days.</div>
+
+  <div class="sec">Calorie Balance</div>
+  <div class="metric-grid">
+    <div class="metric-card accent-blue">
+      <div class="m-lbl">Avg Intake (13d)</div>
+      <div class="m-val blue">2,194</div>
+      <div class="m-sub">kcal/day · target 2,275</div>
+      <div class="m-trend trend-warn">~81 kcal under</div>
+    </div>
+    <div class="metric-card accent-green">
+      <div class="m-lbl">Est. Daily Deficit</div>
+      <div class="m-val green">~316</div>
+      <div class="m-sub">kcal/day vs. TDEE 2,510</div>
+      <div class="m-trend trend-up-good">~0.45 lbs/week</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-lbl">High Day</div>
+      <div class="m-val muted">2,936</div>
+      <div class="m-sub">Apr 27</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-lbl">Low Day (complete)</div>
+      <div class="m-val muted">1,801</div>
+      <div class="m-sub">Apr 28</div>
+    </div>
+  </div>
+
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px">
+    <div class="m-lbl" style="margin-bottom:8px">Weekly Deficit Progress Toward 0.5–0.75 lb/week Target</div>
+    <div class="deficit-bar-wrap">
+      <div class="deficit-bar-fill" style="width:72%"></div>
+    </div>
+    <div class="deficit-label-row">
+      <span>0 kcal deficit</span>
+      <span style="color:var(--green)">~316 kcal actual</span>
+      <span>525 kcal max</span>
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-top:8px">Currently tracking just below the lower bound of target range (250–525 kcal/day). Increase protein — not calories — to close the gap without disrupting the deficit.</div>
+  </div>
+
+  <div class="sec">Macro Breakdown — Days with Full Data</div>
+
+  <div class="callout callout-red">
+    <div class="c-head">🔴 Critical — Protein</div>
+    Not a single logged day hit the 140g target. Best day: 87g (May 1) = 62% of target. Average across 7 logged days: 52g = 37% of target. At this level, muscle preservation during a deficit is actively at risk. This is the #1 nutrition fix.
+  </div>
+
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px">
+    <div class="m-lbl" style="margin-bottom:10px">Protein (g) — Logged Days Only · Target: 140g</div>
+    <div class="mini-bar-wrap">
+      <div class="mini-bar-row"><span class="mini-bar-lbl">Apr 20</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:4%;background:var(--red)"></div></div><span class="mini-bar-val" style="color:var(--red)">6g*</span></div>
+      <div class="mini-bar-row"><span class="mini-bar-lbl">Apr 27</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:15%;background:var(--red)"></div></div><span class="mini-bar-val" style="color:var(--red)">21g*</span></div>
+      <div class="mini-bar-row"><span class="mini-bar-lbl">Apr 28</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:48%;background:var(--amber)"></div></div><span class="mini-bar-val" style="color:var(--amber)">67g</span></div>
+      <div class="mini-bar-row"><span class="mini-bar-lbl">Apr 29</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:36%;background:var(--amber)"></div></div><span class="mini-bar-val" style="color:var(--amber)">50g</span></div>
+      <div class="mini-bar-row"><span class="mini-bar-lbl">Apr 30</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:62%;background:var(--amber)"></div></div><span class="mini-bar-val" style="color:var(--amber)">86g</span></div>
+      <div class="mini-bar-row"><span class="mini-bar-lbl">May 1</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:62%;background:var(--amber)"></div></div><span class="mini-bar-val" style="color:var(--amber)">87g</span></div>
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-top:6px">* Apr 20 and Apr 27 — incomplete logging days, not true daily totals</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:10px;color:var(--muted)">
+      <div style="flex:1;height:1px;background:var(--green);opacity:.6"></div>
+      <span style="color:var(--green)">Target: 140g</span>
+      <div style="flex:1;height:1px;background:var(--green);opacity:.6"></div>
+    </div>
+  </div>
+
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px">
+    <div class="m-lbl" style="margin-bottom:10px">Total Fat (g) — Logged Days · Target: 75g</div>
+    <div class="mini-bar-wrap">
+      <div class="mini-bar-row"><span class="mini-bar-lbl">Apr 28</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:36%;background:var(--amber)"></div></div><span class="mini-bar-val" style="color:var(--amber)">90g</span></div>
+      <div class="mini-bar-row"><span class="mini-bar-lbl">Apr 29</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:23%;background:var(--green)"></div></div><span class="mini-bar-val" style="color:var(--green)">57g ✓</span></div>
+      <div class="mini-bar-row"><span class="mini-bar-lbl">Apr 30</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:48%;background:var(--amber)"></div></div><span class="mini-bar-val" style="color:var(--amber)">119g</span></div>
+      <div class="mini-bar-row"><span class="mini-bar-lbl">May 1</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:100%;background:var(--red)"></div></div><span class="mini-bar-val" style="color:var(--red)">252g⚠</span></div>
+    </div>
+    <div class="callout callout-amber" style="margin-top:10px;margin-bottom:0">
+      <div class="c-head">May 1: 252g Fat — Likely Logging Error</div>
+      At 9 kcal/g, this accounts for 2,268 kcal of a 2,324 kcal day — leaving only 56 kcal for protein and carbs. Open Lose It, find May 1 entries, check for quantity errors (e.g., grams vs. oz, or 100g instead of 10g on a high-fat food).
+    </div>
+  </div>
+
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px">
+    <div class="m-lbl" style="margin-bottom:10px">Carbohydrates (g) — Logged Days · Target: 260g</div>
+    <div class="mini-bar-wrap">
+      <div class="mini-bar-row"><span class="mini-bar-lbl">Apr 28</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:50%;background:var(--amber)"></div></div><span class="mini-bar-val" style="color:var(--amber)">129g</span></div>
+      <div class="mini-bar-row"><span class="mini-bar-lbl">Apr 29</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:41%;background:var(--amber)"></div></div><span class="mini-bar-val" style="color:var(--amber)">108g</span></div>
+      <div class="mini-bar-row"><span class="mini-bar-lbl">Apr 30</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:78%;background:var(--blue)"></div></div><span class="mini-bar-val" style="color:var(--blue)">204g</span></div>
+      <div class="mini-bar-row"><span class="mini-bar-lbl">May 1</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:84%;background:var(--blue)"></div></div><span class="mini-bar-val" style="color:var(--blue)">219g</span></div>
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-top:6px">Apr 30 and May 1 approaching target — trend improving on logged days</div>
+  </div>
+
+  <div class="sec">Caffeine</div>
+  <div class="callout callout-red">
+    <div class="c-head">⚠️ Caffeine — 4 Days Logged</div>
+    1,272mg logged on Apr 28, Apr 30, May 1 — 3× the ~400mg safety guideline. One day at 636mg (Apr 29). High caffeine suppresses appetite (may be driving low protein intake) and can fragment sleep. Verify these readings in Lose It. If accurate, consider reducing and tracking timing relative to the 9:45pm bedtime target.
+  </div>
+
+  <div class="sec">Targets vs. Actuals Summary</div>
+  <div class="macro-row">
+    <div class="macro-card" style="border-color:#3a1010">
+      <div class="macro-lbl">Protein</div>
+      <div class="macro-val" style="color:var(--red)">52g</div>
+      <div class="macro-target">target 140g</div>
+      <div class="macro-bar"><div class="macro-bar-fill" style="width:37%;background:var(--red)"></div></div>
+    </div>
+    <div class="macro-card" style="border-color:#1a2a10">
+      <div class="macro-lbl">Calories</div>
+      <div class="macro-val" style="color:var(--amber)">2,194</div>
+      <div class="macro-target">target 2,275</div>
+      <div class="macro-bar"><div class="macro-bar-fill" style="width:96%;background:var(--amber)"></div></div>
+    </div>
+    <div class="macro-card" style="border-color:#103048">
+      <div class="macro-lbl">Carbs</div>
+      <div class="macro-val" style="color:var(--blue)">125g</div>
+      <div class="macro-target">target 260g</div>
+      <div class="macro-bar"><div class="macro-bar-fill" style="width:48%;background:var(--blue)"></div></div>
+    </div>
+    <div class="macro-card" style="border-color:#3a2800">
+      <div class="macro-lbl">Fat</div>
+      <div class="macro-val" style="color:var(--amber)">~79g*</div>
+      <div class="macro-target">target 75g</div>
+      <div class="macro-bar"><div class="macro-bar-fill" style="width:100%;background:var(--amber)"></div></div>
+    </div>
+  </div>
+  <div style="font-size:10px;color:var(--muted);margin-bottom:16px">* Fat avg skewed by May 1 outlier (252g). Excl. May 1: avg ~65g — under target</div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     TAB: WEEK PLAN
+══════════════════════════════════════ -->
+<div class="tab-content" id="tab-plan">
+
+  <div class="callout callout-green" style="margin-top:16px">
+    <div class="c-head">Week of May 4 — Context</div>
+    Biomarkers are strong. RHR at personal low (50 bpm), HRV healthy (69.6ms), sleep averaging 7h. The single focus outside of training: fix protein. Every training session is undermined by insufficient protein recovery.
+  </div>
+
+  <div class="sec">Weekly Training Plan</div>
+
+  <!-- MONDAY -->
+  <div class="plan-day open" id="pd-mon">
+    <div class="plan-day-hdr" onclick="togglePlan('mon')">
+      <div class="plan-day-left">
+        <div class="plan-dot" style="background:var(--green)"></div>
+        <div>
+          <div class="plan-day-name">Monday · Today</div>
+          <div class="plan-day-sub">Push — Strength Session A</div>
+        </div>
       </div>
-      <div class="nut-week-row"><span class="nut-week-date">Apr 13</span><div class="nut-week-vals"><span class="nut-warn">2,697 kcal</span><span class="nut-ok">134g</span></div></div>
-      <div class="nut-week-row"><span class="nut-week-date">Apr 14</span><div class="nut-week-vals"><span class="nut-danger">3,319 kcal</span><span class="nut-danger">60g</span></div></div>
-      <div class="nut-week-row"><span class="nut-week-date">Apr 15</span><div class="nut-week-vals"><span class="nut-danger">942 kcal</span><span class="nut-danger">81g</span></div></div>
-      <div class="nut-week-row"><span class="nut-week-date">Apr 16</span><div class="nut-week-vals"><span class="nut-danger">1,124 kcal</span><span class="nut-danger">42g</span></div></div>
-      <div class="nut-week-row"><span class="nut-week-date">Apr 17</span><div class="nut-week-vals"><span class="nut-danger">2,870 kcal</span><span class="nut-warn">111g</span></div></div>
-      <div class="nut-week-row"><span class="nut-week-date">Apr 18</span><div class="nut-week-vals"><span class="nut-danger">830 kcal</span><span class="nut-danger">1g</span></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:10px;padding-top:8px;border-top:1px solid var(--border);margin-top:4px">
-        <span style="color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Target</span>
-        <div style="display:flex;gap:20px"><span style="color:var(--nut)">2,275 kcal</span><span style="color:var(--str)">140g</span></div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="plan-day-badge" style="background:var(--green-bg);color:var(--green);border:1px solid #2a4010">Strength</div>
+        <div class="plan-day-arr">▾</div>
       </div>
     </div>
-
-    <div class="callout c-alert">
-      <div class="c-lbl">This Week's Pattern</div>
-      Calories swinging 830–3,319. Protein averaging ~71g — half the 140g target. Low days confirmed accurate: caused by low hunger and busy schedule. This week's focus: anchor every meal to your walks so eating becomes automatic.
+    <div class="plan-body">
+      <div class="plan-section">
+        <div class="plan-section-lbl">Session — 6:00–7:30am · cap 45 min</div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div>10-min Apple Fitness+ Yoga/Mobility warm-up</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div><strong>75 push-ups</strong> — break into sets as needed (e.g., 4×19 or 3×25)</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div><strong>75 tricep dips</strong> — floor or chair, strict elbow-back form</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div>5–10 min Apple Fitness+ cooldown stretch</div></div>
+      </div>
+      <div class="plan-section">
+        <div class="plan-section-lbl">Nutrition Priority Today</div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--amber-bg);color:var(--amber)">!</div><div>35g protein per meal × 4 meals. Pre-bed protein (cottage cheese / protein shake) is non-negotiable for overnight recovery on the 6-hour window.</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--amber-bg);color:var(--amber)">!</div><div>Log every food item individually in Lose It — no manual calorie entries today.</div></div>
+      </div>
     </div>
-
-    <div class="sec-lbl">Daily Macro Targets</div>
-    <div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:8px">
-      <div class="macro-row"><div class="macro-hdr"><span class="macro-name">Protein</span><span>140g · 560 kcal</span></div><div class="macro-track"><div class="macro-fill fill-pro" style="width:100%"></div></div></div>
-      <div class="macro-row"><div class="macro-hdr"><span class="macro-name">Carbohydrates</span><span>260g · 1,040 kcal</span></div><div class="macro-track"><div class="macro-fill fill-car" style="width:100%"></div></div></div>
-      <div class="macro-row"><div class="macro-hdr"><span class="macro-name">Fat</span><span>75g · 675 kcal</span></div><div class="macro-track"><div class="macro-fill fill-fat" style="width:100%"></div></div></div>
-      <div class="macro-row" style="margin-bottom:0"><div class="macro-hdr"><span class="macro-name">Total Calories</span><span>2,275 kcal</span></div><div class="macro-track"><div class="macro-fill fill-cal" style="width:100%"></div></div></div>
-    </div>
-
-    <div class="sec-lbl">Meal Schedule</div>
-    <div class="nut-block"><div class="nut-name">🌅 Breakfast — 7:00am · 600 kcal</div><div class="nut-sub">~40g protein. Anchor to morning walk — eat immediately after. Non-negotiable even when not hungry.<br><br>Options: 3 eggs + 1 cup oats + banana · Greek yogurt bowl + granola + berries · Protein smoothie + oats + PB</div></div>
-    <div class="nut-block"><div class="nut-name">☀️ Lunch — 12:30pm · 650 kcal</div><div class="nut-sub">~40g protein. Set a phone alarm if needed. Do not skip during Apple work hours.<br><br>Options: Chicken + rice + roasted veg · Turkey wrap + avocado + hummus · Salmon + sweet potato</div></div>
-    <div class="nut-block"><div class="nut-name">🌇 Dinner — 5:00pm · 650 kcal</div><div class="nut-sub">~35g protein. Before evening walk. Fuels walk and run on run days.<br><br>Options: Lean beef + veg + rice · Shrimp stir fry · Chicken thighs + quinoa + roasted veg</div></div>
-    <div class="nut-block"><div class="nut-name">🌙 Evening Meal — 8:30pm · 375 kcal</div><div class="nut-sub">~25g protein. Slow-digesting protein supports overnight muscle recovery during 6hr sleep window.<br><br>Options: Cottage cheese + berries · Greek yogurt + almonds · Protein shake + banana</div></div>
-
-    <div class="callout c-tip"><div class="c-lbl">Priority #1</div>Hit 140g protein every day. On low-hunger days: protein shake + banana = 2 minutes, 400 kcal, 25–50g protein. No excuses.</div>
-    <div class="callout c-warn"><div class="c-lbl">Low Day Strategy</div>When not hungry: eat small high-protein anyway. 830 kcal days break down muscle for fuel — this directly works against getting ripped.</div>
-
-    <div class="sec-lbl">Grocery Staples</div>
-    <div class="rest-card"><div class="rest-name">Proteins</div><div class="rest-sub">Chicken breast/thighs, ground beef, salmon, shrimp, eggs, Greek yogurt, cottage cheese, protein powder, turkey</div></div>
-    <div class="rest-card"><div class="rest-name">Carbs</div><div class="rest-sub">Oats, rice, sweet potatoes, quinoa, whole wheat tortillas, bananas, berries, granola</div></div>
-    <div class="rest-card"><div class="rest-name">Fats</div><div class="rest-sub">Avocado, almond butter, peanut butter, almonds, olive oil</div></div>
-    <div class="rest-card"><div class="rest-name">Vegetables</div><div class="rest-sub">Broccoli, asparagus, spinach, bell peppers, zucchini</div></div>
   </div>
-</div>
 
-<div class="content" id="tab-health">
-  <div style="padding:20px">
-    <span class="s-tag s-tag-health">Health Dashboard</span>
-    <div class="s-title">Weekly Metrics</div>
-    <div class="s-sub">Week of Apr 13–19, 2026</div>
-    <div class="s-timing t-health">Updated Apr 19, 2026 · Check-in every Sunday</div>
-
-    <div class="sec-lbl">Burnout Indicators</div>
-    <div class="burnout-card">
-      <div class="burnout-title">⚡ Early Warning System</div>
-      <div class="burnout-row"><div class="burnout-metric">HRV Average</div><div class="burnout-right"><div class="burnout-val metric-ok">63ms</div><span class="status-pill s-ok">Safe</span></div></div>
-      <div class="burnout-row"><div class="burnout-metric">HRV Low (Apr 14)</div><div class="burnout-right"><div class="burnout-val metric-warn">50ms</div><span class="status-pill s-warn">At Threshold</span></div></div>
-      <div class="burnout-row"><div class="burnout-metric">HRV Today (Apr 19)</div><div class="burnout-right"><div class="burnout-val metric-ok">89ms</div><span class="status-pill s-ok">Best of Week</span></div></div>
-      <div class="burnout-row"><div class="burnout-metric">Resting HR Average</div><div class="burnout-right"><div class="burnout-val metric-ok">57 bpm</div><span class="status-pill s-ok">Safe</span></div></div>
-      <div class="burnout-row"><div class="burnout-metric">Resting HR Spike (Apr 16)</div><div class="burnout-right"><div class="burnout-val metric-danger">74 bpm</div><span class="status-pill s-danger">Breached</span></div></div>
-      <div class="burnout-row"><div class="burnout-metric">VO2 Max</div><div class="burnout-right"><div class="burnout-val metric-ok">43.7</div><span class="status-pill s-ok">Stable</span></div></div>
-      <div class="burnout-row"><div class="burnout-metric">Sleep Fragmentation</div><div class="burnout-right"><div class="burnout-val metric-ok">Mild</div><span class="status-pill s-ok">Safe</span></div></div>
+  <!-- TUESDAY -->
+  <div class="plan-day" id="pd-tue">
+    <div class="plan-day-hdr" onclick="togglePlan('tue')">
+      <div class="plan-day-left">
+        <div class="plan-dot" style="background:var(--blue)"></div>
+        <div>
+          <div class="plan-day-name">Tuesday</div>
+          <div class="plan-day-sub">Run — Zone 2 · 1.0–1.25 mi</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="plan-day-badge" style="background:var(--blue-bg);color:var(--blue);border:1px solid #103048">Run</div>
+        <div class="plan-day-arr">▾</div>
+      </div>
     </div>
-    <div class="callout c-warn"><div class="c-lbl">Apr 16 HR Spike</div>Resting HR hit 74 bpm — above the 65 bpm burnout threshold. Recovered next day to 53 bpm. Single-day event, not a sustained trend. Investigate cause. Monitor this week.</div>
-
-    <div class="sec-lbl">Cardiovascular</div>
-    <div class="metric-grid">
-      <div class="metric-card"><div class="metric-lbl">Resting HR</div><div class="metric-val metric-ok">57 bpm</div><div class="metric-note">Weekly avg. Excellent for age 37. Trending down to 52.</div></div>
-      <div class="metric-card"><div class="metric-lbl">HRV Avg</div><div class="metric-val metric-ok">63ms</div><div class="metric-note">Solid recovery. Above 50ms burnout threshold.</div></div>
-      <div class="metric-card"><div class="metric-lbl">VO2 Max</div><div class="metric-val metric-ok">43.7</div><div class="metric-note">mL/min/kg. Good–Excellent for age 37. Stable.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Blood Oxygen</div><div class="metric-val metric-ok">97.3%</div><div class="metric-note">Excellent. Well above 95% threshold.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Resp. Rate</div><div class="metric-val metric-ok">11.8</div><div class="metric-note">Breaths/min. Healthy range 12–20.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Walking Speed</div><div class="metric-val metric-ok">1.15 m/s</div><div class="metric-note">Above average. Consistent gait and balance.</div></div>
+    <div class="plan-body">
+      <div class="plan-section">
+        <div class="plan-section-lbl">Run — 6:00–6:45pm</div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--blue-bg);color:var(--blue)">▶</div><div>1.0–1.25 mi at Zone 2 (conversational pace, HR &lt;145 bpm). If week 2 feels solid, nudge to 1.25 mi.</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--blue-bg);color:var(--blue)">▶</div><div>5-min post-run stretch: quads, calves, hip flexors</div></div>
+      </div>
+      <div class="plan-section">
+        <div class="plan-section-lbl">Watch Points</div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--surf2);color:var(--muted)">→</div><div>Check morning HRV before run. If below 50ms, keep it at exactly 1.0 mi — no extension.</div></div>
+      </div>
     </div>
-
-    <div class="sec-lbl">Body Composition</div>
-    <div class="metric-grid">
-      <div class="metric-card"><div class="metric-lbl">Weight</div><div class="metric-val" style="color:var(--muted)">~156 lbs</div><div class="metric-note">Dec 2025. Possibly slightly lighter. No scale currently.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Body Fat</div><div class="metric-val metric-ok">14.8%</div><div class="metric-note">Dec 2025. Goal: reach 10–12%.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Lean Mass</div><div class="metric-val metric-ok">~133 lbs</div><div class="metric-note">60.3kg. Protect with protein + resistance training.</div></div>
-      <div class="metric-card"><div class="metric-lbl">BMR</div><div class="metric-val metric-ok">~1,747</div><div class="metric-note">kcal/day from Apple Health. Matches Mifflin-St Jeor calc.</div></div>
-    </div>
-
-    <div class="sec-lbl">Activity This Week</div>
-    <div class="metric-grid">
-      <div class="metric-card"><div class="metric-lbl">Avg Steps</div><div class="metric-val metric-ok">10,090</div><div class="metric-note">Apr 18–19 brought avg down. Active days 12–14K.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Active Cal</div><div class="metric-val metric-ok">614</div><div class="metric-note">Avg kcal/day. Strong walking baseline.</div></div>
-      <div class="metric-card full"><div class="metric-lbl">Workouts Logged</div><div class="metric-val" style="color:var(--muted);font-size:16px">Walking only this week</div><div class="metric-note">No resistance training or running logged Apr 13–19. Resistance routine and running begin this week (Week 1 start).</div></div>
-    </div>
-
-    <div class="sec-lbl">Sleep This Week</div>
-    <div class="metric-grid">
-      <div class="metric-card"><div class="metric-lbl">Bedtime</div><div class="metric-val metric-ok">~9:45pm</div><div class="metric-note">PDT. Consistent and before 10pm as confirmed.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Wake Time</div><div class="metric-val metric-ok">~3:45am</div><div class="metric-note">PDT. Intentional for LIAP deep work block.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Apr 14–15</div><div class="metric-val metric-ok">6h 47m</div><div class="metric-note">Core, REM, Deep all present.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Apr 15–16</div><div class="metric-val metric-ok">7h 50m</div><div class="metric-note">Best night. Minimal fragmentation.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Apr 16–17</div><div class="metric-val metric-ok">7h 31m</div><div class="metric-note">Solid. Good staging quality.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Trend</div><div class="metric-val metric-ok">↑ Better</div><div class="metric-note">Two 7.5hr nights — real improvement. Protect this.</div></div>
-    </div>
-
-    <div class="sec-lbl">Burnout Threshold Reference</div>
-    <div class="rest-card"><div class="rest-name" style="color:#f06060">🚨 Danger — Reduce Load</div><div class="rest-sub">HRV below 50ms for 2+ days · Resting HR above 65 bpm sustained · VO2 Max declining · Sleep under 5.5hrs · Energy noticeably lower</div></div>
-    <div class="rest-card"><div class="rest-name" style="color:var(--nut)">⚠️ Watch — Monitor Closely</div><div class="rest-sub">Single-day HRV dip 50–55ms · Single-day HR spike above 65 · Sleep fragmentation increasing · Energy lower than usual</div></div>
-    <div class="rest-card"><div class="rest-name" style="color:var(--health)">✅ Green — All Clear</div><div class="rest-sub">HRV above 60ms · Resting HR 50–62 bpm · VO2 Max stable or rising · Sleep 6hrs+ good staging · Energy consistent</div></div>
   </div>
-</div>
 
-<div class="content" id="tab-sleep">
-  <div style="padding:20px">
-    <span class="s-tag s-tag-sleep">Sleep</span>
-    <div class="s-title">Sleep Protocol</div>
-    <div class="s-sub">~6 hours by design · Quality over quantity</div>
-    <div class="s-timing t-sleep">9:45pm → 3:45am PDT · LIAP begins 3:47am</div>
-
-    <div class="sec-lbl">Your Sleep Design</div>
-    <div class="sleep-block"><div class="sleep-name">🌙 Lights Out — 9:45pm PDT</div><div class="sleep-sub">Non-negotiable. Consistent bedtime is the most powerful sleep lever. Recent 7.5hr nights confirm this structure is working.</div></div>
-    <div class="sleep-block"><div class="sleep-name">⚡ Wake — 3:45am PDT</div><div class="sleep-sub">Intentional for LIAP deep work block (3:47am–8am). Deliberate trade-off accepted as part of the dual-career structure. Goal: maximize quality within the window.</div></div>
-    <div class="sleep-block"><div class="sleep-name">🚶 Morning Walk — ~8am PDT</div><div class="sleep-sub">Morning light within 60 minutes of waking anchors your circadian rhythm and improves sleep quality the following night. Your 8am walk is doing this automatically.</div></div>
-
-    <div class="sec-lbl">This Week's Sleep Quality</div>
-    <div class="metric-grid">
-      <div class="metric-card"><div class="metric-lbl">Apr 14–15</div><div class="metric-val metric-ok">6h 47m</div><div class="metric-note">Core, REM, Deep all present. Good staging.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Apr 15–16</div><div class="metric-val metric-ok">7h 50m</div><div class="metric-note">Best night. Minimal fragmentation.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Apr 16–17</div><div class="metric-val metric-ok">7h 31m</div><div class="metric-note">Solid. All sleep stages present.</div></div>
-      <div class="metric-card"><div class="metric-lbl">Trend</div><div class="metric-val metric-ok">↑ Better</div><div class="metric-note">Two 7.5hr nights is meaningful improvement from prior 6hr pattern.</div></div>
+  <!-- WEDNESDAY -->
+  <div class="plan-day" id="pd-wed">
+    <div class="plan-day-hdr" onclick="togglePlan('wed')">
+      <div class="plan-day-left">
+        <div class="plan-dot" style="background:var(--green)"></div>
+        <div>
+          <div class="plan-day-name">Wednesday</div>
+          <div class="plan-day-sub">Pull + Core — Strength Session B</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="plan-day-badge" style="background:var(--green-bg);color:var(--green);border:1px solid #2a4010">Strength</div>
+        <div class="plan-day-arr">▾</div>
+      </div>
     </div>
-
-    <div class="sec-lbl">Optimization Protocol</div>
-    <div class="rest-card"><div class="rest-name">No screens 30 min before bed</div><div class="rest-sub">Blue light suppresses melatonin. Enable Night Shift at maximum warmth. Measurably improves deep sleep percentage.</div></div>
-    <div class="rest-card"><div class="rest-name">Room temp 65–68°F</div><div class="rest-sub">Core body temperature dropping is a key sleep trigger. Most people sleep 3–5 degrees too warm.</div></div>
-    <div class="rest-card"><div class="rest-name">Evening meal by 8:30pm</div><div class="rest-sub">Slow-digesting protein at 8:30pm supports overnight muscle repair. Timing is already correct.</div></div>
-    <div class="rest-card"><div class="rest-name">Complete runs by 7:30pm</div><div class="rest-sub">Hard effort close to bedtime raises cortisol and delays sleep onset. Evening walks are fine. Runs finish by 7:30pm.</div></div>
-
-    <div class="callout c-tip"><div class="c-lbl">Sleep and Body Recomposition</div>Growth hormone and muscle repair happen during sleep. The recent 7.5hr nights are directly supporting your recomposition goal — as important as hitting protein targets.</div>
-    <div class="callout c-warn"><div class="c-lbl">Watch — HRV as Sleep Quality Proxy</div>If HRV drops below 50ms consistently, sleep quality is degrading even if duration looks fine. HRV is your real-time sleep quality indicator. Check every Sunday.</div>
+    <div class="plan-body">
+      <div class="plan-section">
+        <div class="plan-section-lbl">Session — 6:00–7:30am · cap 45 min</div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div>10-min Apple Fitness+ warm-up (HIIT or Pilates)</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div><strong>75 table rows</strong> — keep body rigid, shoulder blades together at top</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div><strong>300 crunches</strong> — 4 variations × 75 (standard, reverse, bicycle, oblique)</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div>5-min cooldown — focus lower back, hamstrings, hip flexors</div></div>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="bottom-nav">
-  <button class="nav-btn active" onclick="switchTab('day')" id="nav-day"><span class="nav-icon">📅</span><span class="nav-label">Plan</span></button>
-  <button class="nav-btn" onclick="switchTab('nutrition')" id="nav-nutrition"><span class="nav-icon">🥗</span><span class="nav-label">Nutrition</span></button>
-  <button class="nav-btn" onclick="switchTab('health')" id="nav-health"><span class="nav-icon">❤️</span><span class="nav-label">Health</span></button>
-  <button class="nav-btn" onclick="switchTab('sleep')" id="nav-sleep"><span class="nav-icon">🌙</span><span class="nav-label">Sleep</span></button>
+  <!-- THURSDAY -->
+  <div class="plan-day" id="pd-thu">
+    <div class="plan-day-hdr" onclick="togglePlan('thu')">
+      <div class="plan-day-left">
+        <div class="plan-dot" style="background:var(--blue)"></div>
+        <div>
+          <div class="plan-day-name">Thursday</div>
+          <div class="plan-day-sub">Run — Zone 2 · 1.0–1.25 mi</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="plan-day-badge" style="background:var(--blue-bg);color:var(--blue);border:1px solid #103048">Run</div>
+        <div class="plan-day-arr">▾</div>
+      </div>
+    </div>
+    <div class="plan-body">
+      <div class="plan-section">
+        <div class="plan-section-lbl">Run — 6:00–6:45pm</div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--blue-bg);color:var(--blue)">▶</div><div>Same distance and effort as Tuesday. Consistency over progression this early in the running block.</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--blue-bg);color:var(--blue)">▶</div><div>Hip flexor stretch + seated hamstring stretch post-run</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRIDAY -->
+  <div class="plan-day" id="pd-fri">
+    <div class="plan-day-hdr" onclick="togglePlan('fri')">
+      <div class="plan-day-left">
+        <div class="plan-dot" style="background:var(--green)"></div>
+        <div>
+          <div class="plan-day-name">Friday</div>
+          <div class="plan-day-sub">Legs — Strength Session C</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="plan-day-badge" style="background:var(--green-bg);color:var(--green);border:1px solid #2a4010">Strength</div>
+        <div class="plan-day-arr">▾</div>
+      </div>
+    </div>
+    <div class="plan-body">
+      <div class="plan-section">
+        <div class="plan-section-lbl">Session — 6:00–7:30am · cap 45 min</div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div>10-min Dance Fitness or Kickboxing warm-up on AF+</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div><strong>75 squats</strong></div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div><strong>75 lunges</strong> (alternating, 37–38 per leg)</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div><strong>75 glute bridges</strong> — 1-sec hold at top each rep</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--green-bg);color:var(--green)">▶</div><div>Cooldown — quads, glutes, lower back</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SATURDAY -->
+  <div class="plan-day" id="pd-sat">
+    <div class="plan-day-hdr" onclick="togglePlan('sat')">
+      <div class="plan-day-left">
+        <div class="plan-dot" style="background:var(--pink)"></div>
+        <div>
+          <div class="plan-day-name">Saturday</div>
+          <div class="plan-day-sub">AF+ Full Session + Evening Run</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="plan-day-badge" style="background:var(--pink-bg);color:var(--pink);border:1px solid #401828">AF+ + Run</div>
+        <div class="plan-day-arr">▾</div>
+      </div>
+    </div>
+    <div class="plan-body">
+      <div class="plan-section">
+        <div class="plan-section-lbl">Morning — AF+ Full Session (~30 min)</div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--pink-bg);color:var(--pink)">▶</div><div>40 reps each: push, rows, squats · 150 crunches (2 variations × 75) — lighter load day</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--pink-bg);color:var(--pink)">▶</div><div>Apple Fitness+ guided session — HIIT, Dance, or Kickboxing per energy level</div></div>
+      </div>
+      <div class="plan-section">
+        <div class="plan-section-lbl">Evening — Run 6–7pm</div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--blue-bg);color:var(--blue)">▶</div><div>1.0 mi Zone 2. If legs feel heavy from the morning, drop to 0.75 mi — no pressure.</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--blue-bg);color:var(--blue)">▶</div><div>Full body stretch sequence post-run — Saturday is highest load day, take it seriously</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUNDAY -->
+  <div class="plan-day" id="pd-sun">
+    <div class="plan-day-hdr" onclick="togglePlan('sun')">
+      <div class="plan-day-left">
+        <div class="plan-dot" style="background:var(--muted)"></div>
+        <div>
+          <div class="plan-day-name">Sunday</div>
+          <div class="plan-day-sub">Full Rest + Recovery</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="plan-day-badge" style="background:#141416;color:var(--muted);border:1px solid var(--border)">Rest</div>
+        <div class="plan-day-arr">▾</div>
+      </div>
+    </div>
+    <div class="plan-body">
+      <div class="plan-section">
+        <div class="plan-section-lbl">Recovery</div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--surf2);color:var(--muted)">→</div><div>Morning walk ~8am · Evening walk ~6–7pm · Optional 10-min restorative yoga on AF+</div></div>
+      </div>
+      <div class="plan-section">
+        <div class="plan-section-lbl">Weekly Check-In</div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--blue-bg);color:var(--blue)">→</div><div>Pull fresh Apple Health data in this dashboard. Review RHR, HRV, VO₂ Max. Check if VO₂ Max recovered above 43.</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--amber-bg);color:var(--amber)">→</div><div>Review protein log from the week — did all 7 days hit 140g? If not, identify which meals failed.</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--amber-bg);color:var(--amber)">→</div><div>Meal prep: batch cook protein staples (chicken, ground beef, hard-boil eggs) to remove friction from the week ahead.</div></div>
+        <div class="plan-item"><div class="plan-bullet" style="background:var(--surf2);color:var(--muted)">→</div><div>LIAP weekly schedule: plan morning blocks so all 5 LIAP days are protected before Mon starts</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">Week 2 Progressive Overload</div>
+  <div class="callout callout-blue">
+    <div class="c-head">What Changes This Week vs. Week 1</div>
+    Running: nudge Tue/Thu to 1.25 mi if Tuesday's run feels comfortable and HRV is above 55ms that morning. Saturday run stays at 1.0 mi regardless — it follows the AF+ session. Strength: same rep counts (75/75/300) — focus is on completing them with better form and tighter rest periods, not adding reps yet. That comes Week 3.
+  </div>
+
 </div>
 
 <script>
-function switchTab(t){
-  ['day','nutrition','health','sleep'].forEach(x=>{
-    document.getElementById('tab-'+x).classList.toggle('active',x===t);
-    document.getElementById('nav-'+x).classList.toggle('active',x===t);
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelector('.tab-nav').childNodes.forEach(b=>{
+    if(b.nodeType===1 && b.getAttribute('onclick')==="switchTab('"+id+"')") b.classList.add('active');
   });
   window.scrollTo({top:0,behavior:'smooth'});
-  if(t==='day')renderTopbar();
 }
 
-const DAYS=[
-{short:'Mon',type:'str',title:'Push Day',sub:'Yoga → Push-ups + Tricep Dips → Apple Fitness+',timing:'6:00–6:45am · before morning walk',
-pills:['LIAP 3:47–6am','Push 6–6:45am','Breakfast 7am','Walk ~8am','Apple 8:30am','Lunch 12:30pm','Dinner 5pm','Walk 6–7pm','Meal 8:30pm','Bed 9:45pm'],
-schedule:[
-{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work. Protected time.'},
-{time:'6:00am',dot:'str',title:'Push Workout',desc:'Yoga 10min → Push-ups 3×25 → Tricep dips 3×25 → Apple Fitness+ 5min'},
-{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein. Anchor to walk. Non-negotiable.'},
-{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min. Morning light for circadian rhythm.'},
-{time:'8:30am',dot:'apple',title:'Apple Work',desc:'Day job.'},
-{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein. Set alarm if needed.'},
-{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein. Before walk.'},
-{time:'6:00pm',dot:'walk',title:'Evening Walk',desc:'~30 min easy.'},
-{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein. Slow protein before bed.'},
-{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Non-negotiable.'}
-],
-sections:[
-{l:'Warm-up — Yoga (10 min)',type:'af',items:[{name:'Apple Fitness+ — Yoga or Mobility',sub:'10 min. Focus on shoulder circles, chest openers, and hip mobility.'}]},
-{l:'Push Block — 20 min',type:'ex',items:[
-{name:'Push-ups',sets:'3 sets × 25 reps — building to 75',
-how:['Hands shoulder-width, body straight head to heel.','Lower chest to floor (2 counts), push back up (1 count).','Core tight. No sagging hips.','60–90 sec rest between sets.'],
-tip:'Week 1: 25 reps clean form. Add 5–10 reps/week until reaching 75.',
-warn:'Stop if form breaks. Quality over grinding.',
-prog:'Week 3: 50 reps. Week 5: full 75.'},
-{name:'Tricep dips',sets:'3 sets × 25 reps — building to 75',
-how:['Sit on floor, knees bent, hands behind hips fingers forward.','Press into hands to lift hips.','Bend elbows, lower hips toward floor — do not touch.','Press back up.'],
-tip:'Elevate hands on a chair for more intensity.',
-warn:'Elbows point straight back — not flaring out.',
-prog:'Week 3: hands elevated. Week 5: full 75.'}
-]},
-{l:'Cooldown — Apple Fitness+ (5 min)',type:'af',items:[{name:'Apple Fitness+ — Cooldown or Stretching',sub:'Focus on chest, shoulders, and triceps.'}]}
-]},
-
-{short:'Tue',type:'run',title:'Zone 2 Run',sub:'Evening run after Apple work',timing:'Run 6:00–6:45pm',
-pills:['LIAP 3:47–6am','Breakfast 7am','Walk ~8am','Apple 8:30am','Lunch 12:30pm','Dinner 5pm','Run 6–6:45pm','Cool-down walk','Meal 8:30pm','Bed 9:45pm'],
-schedule:[
-{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work.'},
-{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein.'},
-{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min.'},
-{time:'8:30am',dot:'apple',title:'Apple Work',desc:'Day job.'},
-{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
-{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein. Eat before run.'},
-{time:'6:00pm',dot:'run',title:'Zone 2 Run — 1.0 mile',desc:'Conversational pace. HR 125–145 bpm.'},
-{time:'6:45pm',dot:'walk',title:'Cool-down Walk',desc:'10–15 min easy.'},
-{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein.'},
-{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Run done before 7:30pm to protect sleep.'}
-],
-sections:[
-{l:'Week 1 Run',type:'run',items:[
-{lbl:'Distance',val:'1.0 mi',note:'~10–12 min of easy jogging.'},
-{lbl:'Pace',val:'Zone 2',note:'Full conversation the whole time. Cannot speak in sentences = slow down or walk.'},
-{lbl:'Run/walk OK',val:'3:1',note:'3 min jog / 1 min walk repeated is fine. Builds aerobic base safely.'}
-]},
-{l:'Post-run stretch (5 min)',type:'ex',items:[
-{name:'Standing quad stretch',sets:'30 sec each leg',how:['Stand on one leg, bend other knee, hold ankle behind you.','Keep knees together. Hold 30 sec each side.'],tip:'Hold a wall if balance is tricky.'},
-{name:'Calf stretch against wall',sets:'30 sec each leg',how:['Face wall. Step one foot back, heel flat on ground.','Lean gently into wall with back leg straight.'],tip:'Flex foot (toes toward you) to deepen stretch.'}
-]}
-]},
-
-{short:'Wed',type:'str',title:'Pull + Core Day',sub:'Yoga → Rows + 300 Crunches → Apple Fitness+',timing:'6:00–6:45am · before morning walk',
-pills:['LIAP 3:47–6am','Pull+Core 6–6:45am','Breakfast 7am','Walk ~8am','Apple 8:30am','Lunch 12:30pm','Dinner 5pm','Walk 6–7pm','Meal 8:30pm','Bed 9:45pm'],
-schedule:[
-{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work.'},
-{time:'6:00am',dot:'str',title:'Pull + Core Workout',desc:'Yoga 10min → Rows 3×25 → Crunches 4×75 (300 total) → Apple Fitness+ 5min'},
-{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein.'},
-{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min.'},
-{time:'8:30am',dot:'apple',title:'Apple Work',desc:'Day job.'},
-{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
-{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein.'},
-{time:'6:00pm',dot:'walk',title:'Evening Walk',desc:'~30 min.'},
-{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein.'},
-{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Non-negotiable.'}
-],
-sections:[
-{l:'Warm-up — Yoga (10 min)',type:'af',items:[{name:'Apple Fitness+ — Yoga or Pilates',sub:'10 min. Focus on back activation, hip opening, and posterior chain warm-up.'}]},
-{l:'Pull Block — 15 min',type:'ex',items:[
-{name:'Table rows',sets:'3 sets × 25 reps — building to 75',
-how:['Find a sturdy table. Lie underneath it on your back.','Grip edge, palms facing you, shoulder-width apart.','Body straight — heels on floor like a plank.','Pull chest up to table edge, squeezing shoulder blades at top.','Lower slowly. One rep.'],
-tip:'More horizontal = harder. Start with slight angle.',
-warn:'Do not shrug shoulders. Keep them pulled back and down.',
-prog:'Week 5: elevate feet on chair.'}
-]},
-{l:'Core Block — 15 min (300 reps total)',type:'ex',items:[
-{name:'Crunches — Standard',sets:'75 reps',how:['Lie on back, knees bent, feet flat.','Hands lightly behind head — do not pull neck.','Curl upper body toward knees using abs. Lower slowly.'],tip:'Focus on contraction at the top.',warn:'Movement from abs, not neck.'},
-{name:'Crunches — Bicycle',sets:'75 reps',how:['Lie on back, hands behind head, feet off ground at 90 degrees.','Right elbow to left knee while extending right leg.','Switch sides in slow controlled motion.'],tip:'Slow is better. Rotation from torso.',warn:'Lower back pressed to floor throughout.'},
-{name:'Crunches — Reverse',sets:'75 reps',how:['Lie on back, arms at sides palms down.','Knees bent 90 degrees.','Use lower abs to curl hips off floor, knees toward chest.','Lower without feet touching.'],tip:'Small controlled movement — not swinging.',warn:'If lower back takes over, reduce range.'},
-{name:'Crunches — Cross-body',sets:'75 reps',how:['Lie on back, one leg extended, opposite knee bent.','Opposite elbow toward bent knee.','Switch sides each rep. Slow and controlled.'],tip:'Rotate shoulder toward opposite hip, not just moving elbow.'}
-]},
-{l:'Cooldown — Apple Fitness+ (5 min)',type:'af',items:[{name:'Apple Fitness+ — Cooldown or Yoga',sub:'Focus on lower back, hip flexors, and hamstrings.'}]}
-]},
-
-{short:'Thu',type:'run',title:'Zone 2 Run',sub:'Evening run after Apple work',timing:'Run 6:00–6:45pm',
-pills:['LIAP 3:47–6am','Breakfast 7am','Walk ~8am','Apple 8:30am','Lunch 12:30pm','Dinner 5pm','Run 6–6:45pm','Cool-down walk','Meal 8:30pm','Bed 9:45pm'],
-schedule:[
-{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work.'},
-{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein.'},
-{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min.'},
-{time:'8:30am',dot:'apple',title:'Apple Work',desc:'Day job.'},
-{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
-{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein. Eat before run.'},
-{time:'6:00pm',dot:'run',title:'Zone 2 Run — 1.0 mile',desc:'Same easy effort as Tuesday. Not a race against yourself.'},
-{time:'6:45pm',dot:'walk',title:'Cool-down Walk',desc:'10–15 min easy.'},
-{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein.'},
-{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Non-negotiable.'}
-],
-sections:[
-{l:'Week 1 Run',type:'run',items:[
-{lbl:'Distance',val:'1.0 mi',note:'Same as Tuesday. Identical easy effort.'},
-{lbl:'Pace',val:'Zone 2',note:'Conversational the whole time. HR under ~145 bpm.'},
-{lbl:'Mindset',val:'Easy',note:'Two easy runs per week builds aerobic base faster than one hard run.'}
-]},
-{l:'Post-run stretch (5 min)',type:'ex',items:[
-{name:'Hip flexor stretch — kneeling lunge',sets:'30 sec each side',how:['Kneel on one knee, other foot forward.','Shift hips forward until you feel stretch at front of back hip.','Keep torso upright.'],tip:'Undoes hip flexor tightness from running and desk sitting.'},
-{name:'Seated hamstring stretch',sets:'30 sec each leg',how:['Sit on floor, one leg extended, other foot tucked in.','Reach toward extended foot.'],tip:'Flex foot (toes toward you) to increase stretch.'}
-]}
-]},
-
-{short:'Fri',type:'str',title:'Legs Day',sub:'Yoga → Squats + Lunges + Glute Bridges → Apple Fitness+',timing:'6:00–6:45am · before morning walk',
-pills:['LIAP 3:47–6am','Legs 6–6:45am','Breakfast 7am','Walk ~8am','Apple 8:30am','Lunch 12:30pm','Dinner 5pm','Walk 6–7pm','Meal 8:30pm','Bed 9:45pm'],
-schedule:[
-{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work.'},
-{time:'6:00am',dot:'str',title:'Legs Workout',desc:'Yoga 10min → Squats 3×25 → Lunges 3×25 → Glute bridges 3×25 → Apple Fitness+ 5min'},
-{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein.'},
-{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min.'},
-{time:'8:30am',dot:'apple',title:'Apple Work',desc:'Day job.'},
-{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
-{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein.'},
-{time:'6:00pm',dot:'walk',title:'Evening Walk',desc:'~30 min. Legs are worked — easy pace.'},
-{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein.'},
-{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'One recovery night before Saturday run.'}
-],
-sections:[
-{l:'Warm-up — Yoga (10 min)',type:'af',items:[{name:'Apple Fitness+ — Yoga or Mobility',sub:'10 min. Focus on hip openers, quad stretches, and glute activation.'}]},
-{l:'Legs Block — 25 min',type:'ex',items:[
-{name:'Bodyweight squats',sets:'3 sets × 25 reps — building to 75',
-how:['Feet shoulder-width, toes out slightly.','Arms out front for balance.','Push hips back, lower until thighs parallel or as deep as comfortable.','Drive through heels. Squeeze glutes at top.'],
-tip:'Weight stays in heels — imagine sitting back onto a chair.',
-warn:'Knees track over toes. Do not let them cave inward.',
-prog:'Week 5: 2-second pause at bottom of each rep.'},
-{name:'Reverse lunges',sets:'3 sets × 25 reps each leg — building to 75',
-how:['Stand tall, feet together, hands on hips.','Step one foot back 2–3 feet, lower back knee toward floor.','Both knees ~90 degrees at bottom.','Push through front heel to return.'],
-tip:'Gentler on knees than forward lunges — great for building back in.',
-warn:'Chest upright. Front knee does not go past toes.',
-prog:'Week 5: resistance band above knees.'},
-{name:'Glute bridges',sets:'3 sets × 25 reps — building to 75',
-how:['Lie on back, knees bent, feet flat hip-width apart.','Arms at sides, palms down.','Drive through heels, squeeze glutes, lift hips toward ceiling.','Straight line from knees to shoulders at top. Hold 1 sec. Lower slowly.'],
-tip:'The squeeze at the top builds the glutes. Do not skip it.',
-warn:'Do not hyperextend lower back. Stop when hips align with torso.',
-prog:'Week 5: single-leg glute bridges.'}
-]},
-{l:'Cooldown — Apple Fitness+ (5 min)',type:'af',items:[{name:'Apple Fitness+ — Cooldown or Stretching',sub:'Focus on quads, glutes, hamstrings, hip flexors. Legs need most attention today.'}]}
-]},
-
-{short:'Sat',type:'mix',title:'Full Body + Run',sub:'Lighter strength · Evening Zone 2 run',timing:'Strength 6–6:45am · Run 6–7pm',
-pills:['LIAP 3:47–6am','Full Body 6–6:45am','Breakfast 7am','Walk ~8am','Lunch 12:30pm','Dinner 5pm','Run 6–7pm','Meal 8:30pm','Bed 9:45pm'],
-schedule:[
-{time:'3:47am',dot:'liap',title:'LIAP Block',desc:'Deep work.'},
-{time:'6:00am',dot:'str',title:'Full Body Light',desc:'Yoga 10min → 40 push-ups + 40 rows + 40 squats + 150 crunches → Apple Fitness+ 5–10min'},
-{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein. Highest load day — fuel properly.'},
-{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'~30 min.'},
-{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
-{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein. Eat before run.'},
-{time:'6:00pm',dot:'run',title:'Zone 2 Run — 1.0 mile',desc:'Third run of week. Shorten to 0.75 mi if legs feel heavy.'},
-{time:'6:50pm',dot:'walk',title:'Cool-down + Full Stretch',desc:'8 min full body stretch. Saturday needs most cooldown.'},
-{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein. Highest load day — protein critical.'},
-{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Biggest training day. Protect the sleep.'}
-],
-sections:[
-{l:'Morning — Full Body Light (40–45 min)',type:'ex',items:[
-{name:'Push-ups',sets:'40 reps',how:['Floor push-ups. Controlled pace.','Maintenance volume — not max effort today.'],tip:'Save energy for the evening run.',warn:'Reduce to 30 if still sore from Monday.'},
-{name:'Table rows',sets:'40 reps',how:['Same form as Wednesday. Controlled pull, squeeze at top.'],tip:'Smooth and controlled.'},
-{name:'Bodyweight squats',sets:'40 reps',how:['Same form as Friday. Full depth, drive through heels.'],tip:'Reduce to 30 if legs fatigued from Friday.'},
-{name:'Crunches — 2 variations',sets:'75 standard + 75 bicycle = 150 total',how:['Standard: 75 reps.','Bicycle: 75 reps.'],tip:'Core gets full effort even on the lighter day.'}
-]},
-{l:'Evening — Week 1 Run',type:'run',items:[
-{lbl:'Distance',val:'1.0 mi',note:'Third run. Same Zone 2 easy effort.'},
-{lbl:'If heavy legs',val:'0.75 mi OK',note:'Morning session + run is highest load. Shorten if needed.'},
-{lbl:'From Week 7',val:'Longest day',note:'Saturday gradually becomes your longest run as base builds.'}
-]},
-{l:'Post-run stretch (8 min)',type:'ex',items:[
-{name:'Full body stretch — do not skip',sets:'8 minutes total',
-how:['Calves: step one foot back, heel flat, lean into wall. 30 sec each side.','Quads: stand on one foot, pull ankle to glute. 30 sec each side.','Hip flexors: kneeling lunge, shift hips forward. 30 sec each side.','Glutes: lie on back, cross ankle over knee, pull both legs toward chest. 30 sec each side.','Hamstrings: seated reach toward extended foot. 30 sec each side.'],
-tip:'Saturday is highest load day. This stretch is part of the session — not optional.'}
-]}
-]},
-
-{short:'Sun',type:'rest',title:'Rest + Recovery',sub:'Walks only · Weekly health check-in',timing:'Rest day · let the week absorb',
-pills:['LIAP planning 3:47am','Breakfast 7am','Walk ~8am','Health check-in','Meal prep','Lunch 12:30pm','Dinner 5pm','Walk 6–7pm','Meal 8:30pm','Bed 9:45pm'],
-schedule:[
-{time:'3:47am',dot:'liap',title:'LIAP — Weekly Planning',desc:'Plan LIAP schedule for coming week. Protect morning blocks now.'},
-{time:'7:00am',dot:'nut',title:'Breakfast — 600 kcal',desc:'~40g protein.'},
-{time:'8:00am',dot:'walk',title:'Morning Walk',desc:'Easy, leisurely. Recovery only.'},
-{time:'10:00am',dot:'apple',title:'Weekly Health Check-In',desc:'Open Claude. Review HRV, resting HR, VO2 Max, sleep, nutrition. Decide: progress to Week 2 or repeat?'},
-{time:'12:00pm',dot:'nut',title:'Meal Prep',desc:'Cook batch chicken, rice, roasted veg. Covers 3–4 days lunch and dinner.'},
-{time:'12:30pm',dot:'nut',title:'Lunch — 650 kcal',desc:'~40g protein.'},
-{time:'5:00pm',dot:'nut',title:'Dinner — 650 kcal',desc:'~35g protein.'},
-{time:'6:00pm',dot:'walk',title:'Evening Walk',desc:'Easy. Let the week absorb.'},
-{time:'8:30pm',dot:'nut',title:'Evening Meal — 375 kcal',desc:'~25g protein.'},
-{time:'9:45pm',dot:'sleep',title:'Lights Out',desc:'Week 2 starts tomorrow.'}
-],
-sections:[
-{l:'Active Recovery',type:'rest',items:[
-{name:'Morning walk (~8am)',sub:'Easy, leisurely pace. No effort target. Recovery, not training.'},
-{name:'Evening walk (~6–7pm)',sub:'Same. Let your body absorb everything from the week.'},
-{name:'Optional: Apple Fitness+ yoga',sub:'10–15 min restorative only. Nothing intense. Completely optional.'}
-]},
-{l:'Weekly Check-In',type:'rest',items:[
-{name:'Review HRV',sub:'Below 50ms sustained = lighter next week. Above 65ms = can push harder.'},
-{name:'Check resting HR',sub:'Above 65 bpm sustained = warning sign. Below 60 = green zone.'},
-{name:'Review nutrition in Lose It',sub:'Did you hit 140g protein daily? Where were the gaps? Adjust approach based on real data.'},
-{name:'How did the week feel?',sub:'Manageable → Week 2 progressions. Hard → repeat Week 1. Both are valid.'},
-{name:'LIAP planning',sub:'Plan next week\'s LIAP schedule so morning blocks stay protected.'},
-{name:'Meal prep',sub:'Cook chicken, rice, roasted veg. Covers 3–4 days with zero weekday effort.'}
-]}
-]}
-];
-
-let selDay=0;
-function dotColor(t){return t==='str'?'#c8f060':t==='run'?'#60c8f0':t==='mix'?'#f0a860':'#55555f';}
-
-function renderTopbar(){
-  const names=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-  document.getElementById('top-title').textContent=names[selDay];
-  document.getElementById('top-sub').textContent=DAYS[selDay].title;
+function togglePlan(day){
+  const el=document.getElementById('pd-'+day);
+  el.classList.toggle('open');
 }
 
-function renderNav(){
-  document.getElementById('day-strip').innerHTML=DAYS.map((d,i)=>`
-    <div class="day-btn ${i===selDay?'sel':''}" data-type="${d.type}" onclick="goDay(${i})">
-      <div class="d-label">${d.short}</div>
-      <div class="d-dot" style="background:${dotColor(d.type)}"></div>
-    </div>`).join('');
-}
-
-function renderDayContent(){
-  const d=DAYS[selDay];
-  const tagClass={str:'s-tag-str',run:'s-tag-run',rest:'s-tag-rest',mix:'s-tag-mix'}[d.type];
-  const tagLabel={str:'Strength',run:'Run',rest:'Rest',mix:'Strength + Run'}[d.type];
-  const timingClass={str:'t-str',run:'t-run',rest:'t-rest',mix:'t-mix'}[d.type];
-  let h=`<span class="s-tag ${tagClass}">${tagLabel}</span>
-    <div class="s-title">${d.title}</div>
-    <div class="s-sub">${d.sub}</div>
-    <div class="s-timing ${timingClass}">${d.timing}</div>`;
-  h+=`<div class="sec-lbl">Day Schedule</div><div class="timeline">`;
-  d.schedule.forEach(ev=>{
-    h+=`<div class="tl-item"><div class="tl-time">${ev.time}</div><div class="tl-dot-wrap"><div class="tl-dot ${ev.dot}"></div></div><div class="tl-body"><div class="tl-title">${ev.title}</div><div class="tl-desc">${ev.desc}</div></div></div>`;
-  });
-  h+=`</div>`;
-  d.sections.forEach(s=>{
-    h+=`<div class="sec-lbl">${s.l}</div>`;
-    if(s.type==='af'){
-      s.items.forEach(it=>{h+=`<div class="af-block"><div class="af-name">${it.name}</div><div class="af-sub">${it.sub}</div></div>`;});
-    } else if(s.type==='run'){
-      const grid=s.items.filter(it=>it.lbl);
-      const exs=s.items.filter(it=>!it.lbl);
-      if(grid.length===2){h+=`<div class="run-grid">`;grid.slice(0,2).forEach(it=>{h+=`<div class="run-card"><div class="run-lbl">${it.lbl}</div><div class="run-val">${it.val}</div><div class="run-note">${it.note}</div></div>`;});h+=`</div>`;if(grid[2])h+=`<div class="run-card-full"><div class="run-lbl">${grid[2].lbl}</div><div class="run-val">${grid[2].val}</div><div class="run-note">${grid[2].note}</div></div>`;}
-      else{grid.forEach(it=>{h+=`<div class="run-card-full"><div class="run-lbl">${it.lbl}</div><div class="run-val">${it.val}</div><div class="run-note">${it.note}</div></div>`;});}
-      exs.forEach((it,idx)=>{h+=buildEx(it,`${selDay}-${s.l}-${idx}`);});
-    } else if(s.type==='rest'){
-      s.items.forEach(it=>{h+=`<div class="rest-card"><div class="rest-name">${it.name}</div><div class="rest-sub">${it.sub}</div></div>`;});
-    } else {
-      s.items.forEach((it,idx)=>{h+=buildEx(it,`${selDay}-${s.l}-${idx}`);});
-    }
-  });
-  h+=`<div class="pill-row">${d.pills.map(p=>`<span class="pill">${p}</span>`).join('')}</div>`;
-  document.getElementById('day-content').innerHTML=h;
-}
-
-function buildEx(it,uid){
-  let h=`<div class="ex" id="ex-${uid}"><div class="ex-hdr" onclick="toggleEx('${uid}')"><div class="ex-left"><div class="ex-name">${it.name}</div><div class="ex-sets">${it.sets||''}</div></div><div class="ex-arr">▾</div></div><div class="ex-body">`;
-  if(it.how&&it.how.length){h+=`<div class="how-lbl">How to do it</div>`;it.how.forEach((step,i)=>{h+=`<div class="how-step"><div class="how-n">${i+1}</div><div>${step}</div></div>`;});}
-  if(it.tip)h+=`<div class="callout c-tip"><div class="c-lbl">Tip</div>${it.tip}</div>`;
-  if(it.warn)h+=`<div class="callout c-warn"><div class="c-lbl">Watch out</div>${it.warn}</div>`;
-  if(it.prog)h+=`<div class="callout c-prog"><div class="c-lbl">Progression</div>${it.prog}</div>`;
-  h+=`</div></div>`;
-  return h;
-}
-
-function toggleEx(uid){document.getElementById('ex-'+uid).classList.toggle('open');}
-
-function goDay(i){
-  selDay=i;renderNav();renderDayContent();renderTopbar();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-const today=new Date().getDay();
-selDay=today===0?6:today-1;
-renderNav();renderDayContent();renderTopbar();
+// Scroll active tab button into view on load
+document.addEventListener('DOMContentLoaded',()=>{
+  const activeTab = document.querySelector('.tab-btn.active');
+  if(activeTab) activeTab.scrollIntoView({block:'nearest',inline:'center'});
+});
 </script>
+
 </body>
 </html>
